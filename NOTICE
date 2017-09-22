@@ -1,0 +1,13 @@
+Copyright 2017 The OpenFermion Developers.
+
+OpenFermion-PySCF (www.openfermion.org) was developed by:
+Ryan Babbush (Google)
+Jarrod McClean (Google)
+Ian Kivlichan (Harvard)
+Damian Steiger (ETH Zurich)
+Thomas Haner (ETH Zurich)
+Craig Gidney (Google)
+Dave Bacon (Google)
+
+OpenFermion-PySCF developed as a fork of FermiLib-Plugin-PySCF.
+FermiLib-Plugin-PySCF was developed by the same authors as above.
