@@ -14,7 +14,7 @@ To start using OpenFermion-Psi4, first install `OpenFermion <http://openfermion.
 
   python -m pip install -e .
 
-Alternatively, one can install using pip with the command:
+Alternatively, one can install the latest major release with the command:
 
 .. code-block:: bash
 
