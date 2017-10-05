@@ -31,7 +31,7 @@ Authors
 
 `Ryan Babbush <http://ryanbabbush.com>`__ (Google),
 `Jarrod McClean <http://jarrodmcclean.com>`__ (Google),
-Ian Kivlichan (Harvard),
+`Ian Kivlichan <http://aspuru.chem.harvard.edu/ian-kivlichan/>`__ (Harvard),
 Damian Steiger (ETH Zurich),
 Thomas Haner (ETH Zurich),
 Craig Gidney (Google) and
