@@ -11,17 +11,18 @@ Installation
 ------------
 
 To start using OpenFermion-Psi4, first install `OpenFermion <http://openfermion.org>`__ and
-`PySCF <http://github.com/sunqm/pyscf>`__. Then, clone this git repo, change directory to the top level folder and run:
+`PySCF <http://github.com/sunqm/pyscf>`__. To install the latest development version of OpenFermion-PySCF,
+clone `this <http://github.com/quantumlib/OpenFermion-PySCF>`__ git repo, change directory to the top level folder and run:
 
 .. code-block:: bash
 
   python -m pip install -e .
 
-Alternatively, one can install the latest major release with the command:
+Alternatively, if using OpenFermion-PySCF as a library, one can install the last official PyPI release with:
 
 .. code-block:: bash
 
-  python -m pip install openfermionpyscf
+  python -m pip install --pre --user openfermionpyscf
 
 Also be sure to take a look at the ipython notebook demos in the examples folder of this repository.
 
