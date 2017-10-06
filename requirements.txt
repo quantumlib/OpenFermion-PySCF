@@ -1,1 +1,1 @@
-openfermion==0.1a1
+openfermion>=0.1a0

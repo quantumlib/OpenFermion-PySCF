@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-# This reads the __version__ variable from fermilibpluginpyscf/_version.py
+# This reads the __version__ variable from openfermionpyscf/_version.py
 exec(open('openfermionpyscf/_version.py').read())
 
 # Readme file as long_description:
