@@ -30,7 +30,7 @@ How to contribute
 -----------------
 
 We'd love to accept your contributions and patches to OpenFermion-PySCF.
-There are a few small guidelines you need to follow.
+There are a few guidelines you need to follow.
 Contributions to OpenFermion-PySCF must be accompanied by a Contributor License Agreement.
 You (or your employer) retain the copyright to your contribution,
 this simply gives us permission to use and redistribute your contributions as part of the project.
@@ -47,8 +47,7 @@ decrease overall test coverage by too much. Make sure you adhere to our style
 guide. Just have a look at our code for clues. We mostly follow
 `PEP 8 <https://www.python.org/dev/peps/pep-0008/>`_ and use
 the corresponding `linter <https://pypi.python.org/pypi/pep8>`_ to check for it.
-Code should always come with documentation, which is generated automatically and can be found
-`here <http://openfermion.readthedocs.io/en/latest/openfermion.html>`_.
+Code should always come with documentation.
 
 Authors
 -------
