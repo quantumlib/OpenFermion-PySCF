@@ -10,8 +10,8 @@ This plugin library allows the electronic structure package `PySCF <http://githu
 Installation
 ------------
 
-To start using OpenFermion-Psi4, first install `OpenFermion <http://openfermion.org>`__ and
-`PySCF <http://github.com/sunqm/pyscf>`__. To install the latest development version of OpenFermion-PySCF,
+To start using OpenFermion-Psi4, first install `PySCF <http://github.com/sunqm/pyscf>`__.
+Then, to install the latest development versions of OpenFermion and OpenFermion-PySCF,
 clone `this <http://github.com/quantumlib/OpenFermion-PySCF>`__ git repo, change directory to the top level folder and run:
 
 .. code-block:: bash
