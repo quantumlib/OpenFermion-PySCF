@@ -1,1 +1,2 @@
 openfermion>=0.1a0
+pyscf

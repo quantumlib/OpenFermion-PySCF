@@ -10,8 +10,7 @@ This plugin library allows the electronic structure package `PySCF <http://githu
 Installation
 ------------
 
-To start using OpenFermion-PySCF, first install `PySCF <http://github.com/sunqm/pyscf>`__.
-Then, to install the latest development versions of OpenFermion and OpenFermion-PySCF,
+To install the latest development versions of OpenFermion, PySCF and OpenFermion-PySCF,
 clone `this <http://github.com/quantumlib/OpenFermion-PySCF>`__ git repo, change directory to the top level folder and run:
 
 .. code-block:: bash
@@ -56,9 +55,8 @@ Authors
 `Jarrod McClean <http://jarrodmcclean.com>`__ (Google),
 `Ian Kivlichan <http://aspuru.chem.harvard.edu/ian-kivlichan/>`__ (Harvard),
 Damian Steiger (ETH Zurich),
-Thomas Haner (ETH Zurich),
-Craig Gidney (Google) and
-Dave Bacon (Google).
+Thomas Haener (ETH Zurich) and
+Dave Bacon (Google)
 
 Disclaimer
 ----------
