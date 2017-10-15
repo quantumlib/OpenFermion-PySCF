@@ -4,26 +4,30 @@ OpenFermion-PySCF
 .. image:: https://badge.fury.io/py/openfermionpyscf.svg
     :target: https://badge.fury.io/py/openfermionpyscf
 
+.. image:: https://img.shields.io/badge/python-2.7%2C%203.4%2C%203.5%2C%203.6-brightgreen.svg
+
 `OpenFermion <http://openfermion.org>`__ is an open source library (licensed under Apache 2) for compiling and analyzing quantum algorithms which simulate fermionic systems.
 This plugin library allows the electronic structure package `PySCF <http://github.com/sunqm/pyscf>`__ (licensed under BSD-2-Clause) to interface with OpenFermion.
 
 Installation
 ------------
 
-To install the latest development versions of OpenFermion, PySCF and OpenFermion-PySCF,
-clone `this <http://github.com/quantumlib/OpenFermion-PySCF>`__ git repo, change directory to the top level folder and run:
+To install the latest versions of OpenFermion, PySCF and OpenFermion-PySCF in development mode:
 
 .. code-block:: bash
 
+  git clone https://github.com/quantumlib/OpenFermion-PySCF
+  cd OpenFermion-PySCF
   python -m pip install -e .
 
-Alternatively, if using OpenFermion-PySCF as a library, one can install the last official PyPI release with:
+Alternatively, to install the latest PyPI releases as libraries (in user mode):
 
 .. code-block:: bash
 
   python -m pip install --pre --user openfermionpyscf
 
-Also be sure to take a look at the ipython notebook demos in the examples folder of this repository.
+Also be sure to take a look at the `ipython notebook demo <https://github.com/quantumlib/OpenFermion-PySCF/blob/master/examples/openfermionpyscf_demo.ipynb>`__
+in the examples folder of this repository.
 
 How to contribute
 -----------------
@@ -54,9 +58,9 @@ Authors
 `Ryan Babbush <http://ryanbabbush.com>`__ (Google),
 `Jarrod McClean <http://jarrodmcclean.com>`__ (Google),
 `Ian Kivlichan <http://aspuru.chem.harvard.edu/ian-kivlichan/>`__ (Harvard),
-Damian Steiger (ETH Zurich),
-Thomas Haener (ETH Zurich) and
-Dave Bacon (Google)
+`Damian Steiger <https://github.com/damiansteiger>`__ (ETH Zurich),
+`Thomas Haener <https://github.com/thomashaener>`__ (ETH Zurich) and
+`Dave Bacon <https://github.com/dabacon>`__ (Google).
 
 Disclaimer
 ----------
