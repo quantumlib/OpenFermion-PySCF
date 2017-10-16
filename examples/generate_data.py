@@ -13,9 +13,7 @@
 """This is a simple script for generating data."""
 import os
 
-from openfermion.hamiltonians import (make_atomic_ring,
-                                      make_atom,
-                                      periodic_table)
+from openfermion.hamiltonians import make_atomic_ring
 
 from openfermionpyscf import run_pyscf
 
@@ -26,7 +24,6 @@ if __name__ == '__main__':
     basis = 'sto-3g'
     max_electrons = 10
     spacing = 0.7414
-    compute_elements = 0
 
     # Select calculations.
     force_recompute = 1
@@ -41,11 +38,7 @@ if __name__ == '__main__':
     for n_electrons in range(2, max_electrons + 1):
 
         # Initialize.
-        if compute_elements:
-            atomic_symbol = periodic_table[n_electrons]
-            molecule = make_atom(atomic_symbol, basis)
-        else:
-            molecule = make_atomic_ring(n_electrons, spacing, basis)
+        molecule = make_atomic_ring(n_electrons, spacing, basis)
         if os.path.exists(molecule.filename + '.hdf5'):
             molecule.load()
 

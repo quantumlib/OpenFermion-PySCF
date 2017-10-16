@@ -55,7 +55,6 @@ if __name__ == '__main__':
     y_log = 0
 
     # Set chemical series parameters.
-    plot_elements = 0
     max_electrons = 10
     spacing = 0.7414
     basis = 'sto-3g'
@@ -63,11 +62,7 @@ if __name__ == '__main__':
     # Get chemical series.
     molecular_series = []
     for n_electrons in range(2, max_electrons + 1):
-        if plot_elements:
-            atomic_symbol = periodic_table[n_electrons]
-            molecule = make_atom(atomic_symbol, basis)
-        else:
-            molecule = make_atomic_ring(n_electrons, spacing, basis)
+        molecule = make_atomic_ring(n_electrons, spacing, basis)
         molecule.load()
         molecular_series += [molecule]
 
