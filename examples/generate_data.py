@@ -13,9 +13,9 @@
 """This is a simple script for generating data."""
 import os
 
-from openfermion.utils import (make_atomic_ring,
-                               make_atom,
-                               periodic_table)
+from openfermion.hamiltonians import (make_atomic_ring,
+                                      make_atom,
+                                      periodic_table)
 
 from openfermionpyscf import run_pyscf
 
