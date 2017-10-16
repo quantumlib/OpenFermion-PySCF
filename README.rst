@@ -12,7 +12,7 @@ This plugin library allows the electronic structure package `PySCF <http://githu
 Installation
 ------------
 
-To install the latest versions of OpenFermion, PySCF and OpenFermion-PySCF in (development mode):
+To install the latest versions of OpenFermion, PySCF and OpenFermion-PySCF (in development mode):
 
 .. code-block:: bash
 
@@ -26,8 +26,7 @@ Alternatively, to install the latest PyPI releases as libraries (in user mode):
 
   python -m pip install --pre --user openfermionpyscf
 
-Also be sure to take a look at the `ipython notebook demo <https://github.com/quantumlib/OpenFermion-PySCF/blob/master/examples/openfermionpyscf_demo.ipynb>`__
-in the examples folder of this repository.
+Also be sure to take a look at the `ipython notebook demo <https://github.com/quantumlib/OpenFermion-PySCF/blob/master/examples/openfermionpyscf_demo.ipynb>`__.
 
 How to contribute
 -----------------
