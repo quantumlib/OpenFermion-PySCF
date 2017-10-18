@@ -187,6 +187,7 @@ def run_pyscf(molecule,
         pyscf_molecule, pyscf_scf)
     molecule.one_body_integrals = one_body_integrals
     molecule.two_body_integrals = two_body_integrals
+    molecule.overlap_integrals = pyscf_scf.get_ovlp()
 
     # Run MP2.
     if run_mp2:
