@@ -67,19 +67,21 @@ How to cite
 -----------
 When using OpenFermion-PySCF for research projects, please cite:
 
-* Jarrod R. McClean, Ian D. Kivlichan, Damian S. Steiger, Yudong Cao, E.
-  Schuyler Fried, Craig Gidney, Thomas Häner, Vojtĕch Havlíček,
-  Zhang Jiang, Matthew Neeley, Jhonathan Romero, Nicholas Rubin, Nicolas P. D.
-  Sawaya, Kanav Setia, Sukin Sim, Wei Sun, Kevin Sung and Ryan Babbush.
-  *OpenFermion: The Electronic Structure Package for Quantum Computers*.
-  arXiv preprint. 2017.
+    Jarrod R. McClean, Ian D. Kivlichan, Damian S. Steiger, Yudong Cao, E.
+    Schuyler Fried, Craig Gidney, Thomas Häner, Vojtĕch Havlíček,
+    Zhang Jiang, Matthew Neeley, Jhonathan Romero, Nicholas Rubin, Nicolas P. D.
+    Sawaya, Kanav Setia, Sukin Sim, Wei Sun, Kevin Sung and Ryan Babbush.
+    *OpenFermion: The Electronic Structure Package for Quantum Computers*.
+    arXiv preprint. 2017.
 
-* Qiming Sun, Timothy C. Berkelbach, Nick S. Blunt, George H. Booth, Sheng Guo,
-  Zhendong Li, Junzi Liu, James McClain, Elvira. R. Sayfutyarova, Sandeep Sharma,
-  Sebastian Wouters and Garnet Kin-Lic Chan.
-  *The Python-based Simulations of Chemistry Framework (PySCF)*.
-  `WIREs Compututational Molecular Science <http://onlinelibrary.wiley.com/doi/10.1002/wcms.1340/full>`__.
-  2017.
+as well as
+
+    Qiming Sun, Timothy C. Berkelbach, Nick S. Blunt, George H. Booth, Sheng Guo,
+    Zhendong Li, Junzi Liu, James McClain, Elvira. R. Sayfutyarova, Sandeep Sharma,
+    Sebastian Wouters and Garnet Kin-Lic Chan.
+    *The Python-based Simulations of Chemistry Framework (PySCF)*.
+    `WIREs Compututational Molecular Science <http://onlinelibrary.wiley.com/doi/10.1002/wcms.1340/full>`__.
+    2017.
 
 We are happy to include future contributors as authors on later OpenFermion releases.
 
