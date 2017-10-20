@@ -26,7 +26,7 @@ Alternatively, to install the latest PyPI releases as libraries (in user mode):
 
 .. code-block:: bash
 
-  python -m pip install --pre --user openfermionpyscf
+  python -m pip install --user openfermionpyscf
 
 Also be sure to take a look at the `ipython notebook demo <https://github.com/quantumlib/OpenFermion-PySCF/blob/master/examples/openfermionpyscf_demo.ipynb>`__.
 
@@ -62,6 +62,25 @@ Authors
 `Damian Steiger <https://github.com/damiansteiger>`__ (ETH Zurich),
 `Thomas Haener <https://github.com/thomashaener>`__ (ETH Zurich) and
 `Dave Bacon <https://github.com/dabacon>`__ (Google).
+
+How to cite
+-----------
+When using OpenFermion-PySCF for research projects, please cite:
+
+* Jarrod R. McClean, Ian D. Kivlichan, Damian S. Steiger, Yudong Cao, E.
+  Schuyler Fried, Craig Gidney, Thomas Häner, Vojtĕch Havlíček,
+  Zhang Jiang, Matthew Neeley, Jhonathan Romero, Nicholas Rubin, Nicolas P. D.
+  Sawaya, Kanav Setia, Sukin Sim, Wei Sun, Kevin Sung and Ryan Babbush.
+  *OpenFermion: The Electronic Structure Package for Quantum Computers*.
+  arXiv preprint. 2017.
+
+* Qiming Sun, Timothy C. Berkelbach, Nick S. Blunt, George H. Booth, Sheng Guo,
+  Zhendong Li, Junzi Liu, James McClain, Elvira. R. Sayfutyarova, Sandeep Sharma,
+  Sebastian Wouters and Garnet Kin-Lic Chan.
+  *The Python-based Simulations of Chemistry Framework (PySCF)*.
+  WIREs Compututational Molecular Science. DOI: 10.1002/wcms.1340. 2017.
+
+We are happy to include future contributors as authors on later OpenFermion releases.
 
 Disclaimer
 ----------
