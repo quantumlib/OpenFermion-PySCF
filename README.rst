@@ -59,9 +59,28 @@ Authors
 `Ryan Babbush <http://ryanbabbush.com>`__ (Google),
 `Jarrod McClean <http://jarrodmcclean.com>`__ (Google),
 `Ian Kivlichan <http://aspuru.chem.harvard.edu/ian-kivlichan/>`__ (Harvard),
+`Kevin J. Sung <https://github.com/kevinsung>`__ (University of Michigan),
 `Damian Steiger <https://github.com/damiansteiger>`__ (ETH Zurich),
-`Thomas Häner <https://github.com/thomashaener>`__ (ETH Zurich) and
-`Dave Bacon <https://github.com/dabacon>`__ (Google).
+`Dave Bacon <https://github.com/dabacon>`__ (Google),
+`Yudong Cao <https://github.com/yudongcao>`__ (Harvard),
+`Chengyu Dai <https://github.com/jdaaph>`__ (University of Michigan),
+`E. Schuyler Fried <https://github.com/schuylerfried>`__ (Harvard),
+`Craig Gidney <https://github.com/Strilanc>`__ (Google),
+`Thomas Häner <https://github.com/thomashaener>`__ (ETH Zurich),
+`Tarini Hardikar <https://github.com/TariniHardikar>`__ (Dartmouth),
+`Vojtĕch Havlíček <https://github.com/VojtaHavlicek>`__ (Oxford),
+`Cupjin Huang <https://github.com/pertoX4726>`__ (University of Michigan),
+`Zhang Jiang <https://ti.arc.nasa.gov/profile/zjiang3>`__ (NASA),
+`Matthew Neeley <https://github.com/maffoo>`__ (Google),
+`Jhonathan Romero <https://github.com/jromerofontalvo>`__ (Harvard),
+`Nicholas Rubin <https://github.com/ncrubin>`__ (Rigetti),
+`Daniel Sank <https://github.com/DanielSank>`__ (Google),
+`Nicolas Sawaya <https://github.com/nicolassawaya>`__ (Harvard),
+`Kanav Setia <https://github.com/kanavsetia>`__ (Dartmouth),
+`Hannah Sim <https://github.com/hsim13372>`__ (Harvard),
+`Wei Sun <https://github.com/Spaceenter>`__ (Google) and
+`Fang Zhang <https://github.com/fangzh-umich>`__ (University of Michigan).
+
 
 How to cite
 -----------
