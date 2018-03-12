@@ -10,7 +10,10 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-"""Class and functions to store quantum chemistry data."""
+"""
+Driver to initialize molecular object from pyscf program.
+"""
+
 from __future__ import absolute_import
 
 from functools import reduce
@@ -21,6 +24,7 @@ from pyscf import ci, cc, fci, mp
 
 from openfermion.config import *
 
+DEBUG = False
 
 def prepare_pyscf_molecule(molecule):
     """
@@ -83,41 +87,32 @@ def compute_integrals(pyscf_molecule, pyscf_scf):
     # Get two electron integrals in compressed format.
     two_electron_compressed = pyscf.ao2mo.kernel(pyscf_molecule,
                                                  pyscf_scf.mo_coeff)
-    two_electron_integrals = numpy.empty((n_orbitals, n_orbitals,
-                                          n_orbitals, n_orbitals))
 
-    # Unpack symmetry.
-    n_pairs = n_orbitals * (n_orbitals + 1) // 2
-    if two_electron_compressed.ndim == 2:
-
-        # Case of 4-fold symmetry.
-        assert(two_electron_compressed.size == n_pairs ** 2)
-        pq = 0
-        for p in range(n_orbitals):
-            for q in range(p + 1):
-                rs = 0
-                for r in range(n_orbitals):
-                    for s in range(r + 1):
-                        pqrs_value = two_electron_compressed[pq, rs]
-                        two_electron_integrals[p, s, r, q] = float(pqrs_value)
-                        two_electron_integrals[q, s, r, p] = float(pqrs_value)
-                        two_electron_integrals[p, r, s, q] = float(pqrs_value)
-                        two_electron_integrals[q, r, s, p] = float(pqrs_value)
-                        rs += 1
-                pq += 1
+    if not DEBUG:
+        two_electron_integrals = pyscf.ao2mo.restore(
+            1, # no permutation symmetry
+            two_electron_compressed, n_orbitals)
+        # See PQRS convention in OpenFermion.hamiltonains._molecular_data
+        # h[p,q,r,s] = (ps|qr)
+        two_electron_integrals = numpy.asarray(
+            two_electron_integrals.transpose(0, 3, 1, 2), order='C')
     else:
+        two_electron_integrals = numpy.empty((n_orbitals, n_orbitals,
+                                              n_orbitals, n_orbitals))
 
-        # Case of 8-fold symmetry.
-        assert(two_electron_compressed.size == n_pairs * (n_pairs + 1) // 2)
-        pq = 0
-        pqrs = 0
-        for p in range(n_orbitals):
-            for q in range(p + 1):
-                rs = 0
-                for r in range(p + 1):
-                    for s in range(r + 1):
-                        if pq >= rs:
-                            pqrs_value = two_electron_compressed[pqrs]
+        # Unpack symmetry.
+        n_pairs = n_orbitals * (n_orbitals + 1) // 2
+        if two_electron_compressed.ndim == 2:
+
+            # Case of 4-fold symmetry.
+            assert(two_electron_compressed.size == n_pairs ** 2)
+            pq = 0
+            for p in range(n_orbitals):
+                for q in range(p + 1):
+                    rs = 0
+                    for r in range(n_orbitals):
+                        for s in range(r + 1):
+                            pqrs_value = two_electron_compressed[pq, rs]
                             two_electron_integrals[p, s,
                                                    r, q] = float(pqrs_value)
                             two_electron_integrals[q, s,
@@ -126,17 +121,40 @@ def compute_integrals(pyscf_molecule, pyscf_scf):
                                                    s, q] = float(pqrs_value)
                             two_electron_integrals[q, r,
                                                    s, p] = float(pqrs_value)
-                            two_electron_integrals[s, p,
-                                                   q, r] = float(pqrs_value)
-                            two_electron_integrals[s, q,
-                                                   p, r] = float(pqrs_value)
-                            two_electron_integrals[r, p,
-                                                   q, s] = float(pqrs_value)
-                            two_electron_integrals[r, q,
-                                                   p, s] = float(pqrs_value)
-                            pqrs += 1
-                        rs += 1
-                pq += 1
+                            rs += 1
+                    pq += 1
+        else:
+
+            # Case of 8-fold symmetry.
+            assert(two_electron_compressed.size == n_pairs * (n_pairs + 1) // 2)
+            pq = 0
+            pqrs = 0
+            for p in range(n_orbitals):
+                for q in range(p + 1):
+                    rs = 0
+                    for r in range(p + 1):
+                        for s in range(r + 1):
+                            if pq >= rs:
+                                pqrs_value = two_electron_compressed[pqrs]
+                                two_electron_integrals[p, s,
+                                                       r, q] = float(pqrs_value)
+                                two_electron_integrals[q, s,
+                                                       r, p] = float(pqrs_value)
+                                two_electron_integrals[p, r,
+                                                       s, q] = float(pqrs_value)
+                                two_electron_integrals[q, r,
+                                                       s, p] = float(pqrs_value)
+                                two_electron_integrals[s, p,
+                                                       q, r] = float(pqrs_value)
+                                two_electron_integrals[s, q,
+                                                       p, r] = float(pqrs_value)
+                                two_electron_integrals[r, p,
+                                                       q, s] = float(pqrs_value)
+                                two_electron_integrals[r, q,
+                                                       p, s] = float(pqrs_value)
+                                pqrs += 1
+                            rs += 1
+                    pq += 1
 
     # Return.
     return one_electron_integrals, two_electron_integrals
@@ -166,14 +184,15 @@ def run_pyscf(molecule,
     """
     # Prepare pyscf molecule.
     pyscf_molecule = prepare_pyscf_molecule(molecule)
-    molecule.n_orbitals = int(pyscf_molecule.nbas)
+    molecule.n_orbitals = int(pyscf_molecule.nao_nr())
     molecule.n_qubits = 2 * molecule.n_orbitals
     molecule.nuclear_repulsion = float(pyscf.gto.energy_nuc(pyscf_molecule))
 
     # Run SCF.
     pyscf_scf = compute_scf(pyscf_molecule)
     pyscf_scf.verbose = 0
-    molecule.hf_energy = float(pyscf_scf.kernel())
+    pyscf_scf.run()
+    molecule.hf_energy = float(pyscf_scf.e_tot)
     if verbose:
         print('Hartree-Fock energy for {} ({} electrons) is {}.'.format(
             molecule.name, molecule.n_electrons, molecule.hf_energy))
@@ -193,23 +212,18 @@ def run_pyscf(molecule,
     if run_mp2:
         pyscf_mp2 = pyscf.mp.MP2(pyscf_scf)
         pyscf_mp2.verbose = 0
-        molecule.mp2_energy = molecule.hf_energy + pyscf_mp2.kernel()[0]
+        pyscf_mp2.run()
+        molecule.mp2_energy = pyscf_mp2.e_tot
         if verbose:
             print('MP2 energy for {} ({} electrons) is {}.'.format(
                 molecule.name, molecule.n_electrons, molecule.mp2_energy))
-
-    # Disable non-singlets for now for CI and CC due to not being implemented
-    if (run_cisd or run_ccsd) and molecule.multiplicity != 1:
-        print("WARNING: CISD and CCSD not implemented for "
-              "non-singlet states in PySCF.")
-        run_cisd = run_ccsd = False
 
     # Run CISD.
     if run_cisd:
         pyscf_cisd = pyscf.ci.CISD(pyscf_scf)
         pyscf_cisd.verbose = 0
-        pyscf_cisd.kernel()
-        molecule.cisd_energy = molecule.hf_energy + pyscf_cisd.e_corr
+        pyscf_cisd.run()
+        molecule.cisd_energy = pyscf_cisd.e_tot
         if verbose:
             print('CISD energy for {} ({} electrons) is {}.'.format(
                 molecule.name, molecule.n_electrons, molecule.cisd_energy))
@@ -218,8 +232,8 @@ def run_pyscf(molecule,
     if run_ccsd:
         pyscf_ccsd = pyscf.cc.CCSD(pyscf_scf)
         pyscf_ccsd.verbose = 0
-        pyscf_ccsd.kernel()
-        molecule.ccsd_energy = molecule.hf_energy + pyscf_ccsd.e_corr
+        pyscf_ccsd.run()
+        molecule.ccsd_energy = pyscf_ccsd.e_tot
         if verbose:
             print('CCSD energy for {} ({} electrons) is {}.'.format(
                 molecule.name, molecule.n_electrons, molecule.ccsd_energy))
