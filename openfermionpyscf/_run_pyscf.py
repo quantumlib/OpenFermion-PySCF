@@ -77,7 +77,7 @@ def compute_integrals(pyscf_molecule, pyscf_scf):
         two_electron_integrals: An N by N by N by N array storing h_{pqrs}.
     """
     # Get one electrons integrals.
-    n_orbitals = pyscf_scf.mo_coeff.shape[0]
+    n_orbitals = pyscf_scf.mo_coeff.shape[1]
     one_electron_compressed = reduce(numpy.dot, (pyscf_scf.mo_coeff.T,
                                                  pyscf_scf.get_hcore(),
                                                  pyscf_scf.mo_coeff))
@@ -92,7 +92,7 @@ def compute_integrals(pyscf_molecule, pyscf_scf):
         two_electron_integrals = pyscf.ao2mo.restore(
             1, # no permutation symmetry
             two_electron_compressed, n_orbitals)
-        # See PQRS convention in OpenFermion.hamiltonains._molecular_data
+        # See PQRS convention in OpenFermion.hamiltonians._molecular_data
         # h[p,q,r,s] = (ps|qr)
         two_electron_integrals = numpy.asarray(
             two_electron_integrals.transpose(0, 3, 1, 2), order='C')
@@ -186,7 +186,7 @@ def run_pyscf(molecule,
     pyscf_molecule = prepare_pyscf_molecule(molecule)
     molecule.n_orbitals = int(pyscf_molecule.nao_nr())
     molecule.n_qubits = 2 * molecule.n_orbitals
-    molecule.nuclear_repulsion = float(pyscf.gto.energy_nuc(pyscf_molecule))
+    molecule.nuclear_repulsion = float(pyscf_molecule.energy_nuc())
 
     # Run SCF.
     pyscf_scf = compute_scf(pyscf_molecule)
@@ -196,6 +196,12 @@ def run_pyscf(molecule,
     if verbose:
         print('Hartree-Fock energy for {} ({} electrons) is {}.'.format(
             molecule.name, molecule.n_electrons, molecule.hf_energy))
+
+    # Hold pyscf data in molecule. They are required to compute density
+    # matrices and other quantities.
+    molecule._pyscf_data = pyscf_data = {}
+    pyscf_data['mol'] = pyscf_molecule
+    pyscf_data['scf'] = pyscf_scf
 
     # Populate fields.
     molecule.canonical_orbitals = pyscf_scf.mo_coeff.astype(float)
@@ -214,6 +220,7 @@ def run_pyscf(molecule,
         pyscf_mp2.verbose = 0
         pyscf_mp2.run()
         molecule.mp2_energy = pyscf_mp2.e_tot
+        pyscf_data['mp2'] = pyscf_mp2
         if verbose:
             print('MP2 energy for {} ({} electrons) is {}.'.format(
                 molecule.name, molecule.n_electrons, molecule.mp2_energy))
@@ -224,6 +231,7 @@ def run_pyscf(molecule,
         pyscf_cisd.verbose = 0
         pyscf_cisd.run()
         molecule.cisd_energy = pyscf_cisd.e_tot
+        pyscf_data['cisd'] = pyscf_cisd
         if verbose:
             print('CISD energy for {} ({} electrons) is {}.'.format(
                 molecule.name, molecule.n_electrons, molecule.cisd_energy))
@@ -234,6 +242,7 @@ def run_pyscf(molecule,
         pyscf_ccsd.verbose = 0
         pyscf_ccsd.run()
         molecule.ccsd_energy = pyscf_ccsd.e_tot
+        pyscf_data['ccsd'] = pyscf_ccsd
         if verbose:
             print('CCSD energy for {} ({} electrons) is {}.'.format(
                 molecule.name, molecule.n_electrons, molecule.ccsd_energy))
@@ -243,6 +252,7 @@ def run_pyscf(molecule,
         pyscf_fci = pyscf.fci.FCI(pyscf_molecule, pyscf_scf.mo_coeff)
         pyscf_fci.verbose = 0
         molecule.fci_energy = pyscf_fci.kernel()[0]
+        pyscf_data['fci'] = pyscf_fci
         if verbose:
             print('FCI energy for {} ({} electrons) is {}.'.format(
                 molecule.name, molecule.n_electrons, molecule.fci_energy))
