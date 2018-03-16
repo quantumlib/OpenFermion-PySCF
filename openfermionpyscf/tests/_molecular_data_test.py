@@ -54,22 +54,22 @@ class MolecularDataTest(unittest.TestCase):
         rdm1 = molecule.cisd_one_rdm
         rdm2 = molecule.cisd_two_rdm
         e_ref = molecule._pyscf_data['cisd'].e_tot
-        e_tot = (numpy.einsum('pq,qp', h1, rdm1) +
-                 numpy.einsum('prsq,qpsr', h2, rdm2) * .5 + e_core)
+        e_tot = (numpy.einsum('pq,pq', h1, rdm1) +
+                 numpy.einsum('pqrs,pqrs', h2, rdm2) * .5 + e_core)
         self.assertAlmostEqual(e_tot, e_ref, 9)
 
         rdm1 = molecule.ccsd_one_rdm
         rdm2 = molecule.ccsd_two_rdm
         e_ref = molecule._pyscf_data['ccsd'].e_tot
-        e_tot = (numpy.einsum('pq,qp', h1, rdm1) +
-                 numpy.einsum('prsq,qpsr', h2, rdm2) * .5 + e_core)
+        e_tot = (numpy.einsum('pq,pq', h1, rdm1) +
+                 numpy.einsum('pqrs,pqrs', h2, rdm2) * .5 + e_core)
         self.assertAlmostEqual(e_tot, e_ref, 7)
 
         rdm1 = molecule.fci_one_rdm
         rdm2 = molecule.fci_two_rdm
         #e_ref = molecule._pyscf_data['fci'].e_tot
-        e_tot = (numpy.einsum('pq,qp', h1, rdm1) +
-                 numpy.einsum('prsq,qpsr', h2, rdm2) * .5 + e_core)
+        e_tot = (numpy.einsum('pq,pq', h1, rdm1) +
+                 numpy.einsum('pqrs,pqrs', h2, rdm2) * .5 + e_core)
         self.assertAlmostEqual(e_tot, -1.1516827321, 9)
 
         ccsd_t1 = molecule.ccsd_single_amps

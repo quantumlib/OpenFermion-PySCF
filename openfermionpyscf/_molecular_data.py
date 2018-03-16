@@ -61,34 +61,39 @@ class MolecularData(MolecularData):
             eri = ao2mo.restore(1, # no permutation symmetry
                                 eri, n_orbitals)
             # See PQRS convention in OpenFermion.hamiltonians.molecular_data
-            # h[p,q,r,s] = (ps|qr)
+            # h[p,q,r,s] = (ps|qr) = pyscf_eri[p,s,q,r]
             self._two_body_integrals = numpy.asarray(
-                eri.transpose(0, 3, 1, 2), order='C')
+                eri.transpose(0, 2, 3, 1), order='C')
         return self._two_body_integrals
 
     @property
     def cisd_one_rdm(self):
         if self._cisd_one_rdm is None:
             cisd = self._pyscf_data.get('cisd', None)
-            self._cisd_one_rdm = cisd.make_rdm1()
+# pyscf one_rdm is computed as dm1[p,q] = <a^\dagger_q a_p>
+            self._cisd_one_rdm = cisd.make_rdm1().T
         return self._cisd_one_rdm
 
     @property
     def cisd_two_rdm(self):
         if self._cisd_two_rdm is None:
             cisd = self._pyscf_data.get('cisd', None)
-            self._cisd_two_rdm = cisd.make_rdm2()
+# pyscf.ci.cisd.make_rdm2 convention
+#       dm2[p,s,q,r] = <a^\dagger_p a^\dagger_q a_r a_s>.
+# the two_body_tensor in openfermion.ops._interaction_rdm.InteractionRDM
+#       tbt[p,q,r,s] = <a^\dagger_p a^\dagger_q a_r a_s>.
+            self._cisd_two_rdm = cisd.make_rdm2().transpose(0, 2, 3, 1)
         return self._cisd_two_rdm
 
     @property
     def ccsd_one_rdm(self):
         ccsd = self._pyscf_data.get('ccsd', None)
-        return ccsd.make_rdm1()
+        return ccsd.make_rdm1().T
 
     @property
     def ccsd_two_rdm(self):
         ccsd = self._pyscf_data.get('ccsd', None)
-        return ccsd.make_rdm2()
+        return ccsd.make_rdm2().transpose(0, 2, 3, 1)
 
     @property
     def fci_one_rdm(self):
@@ -96,7 +101,7 @@ class MolecularData(MolecularData):
             fci = self._pyscf_data.get('fci', None)
             norb = self.canonical_orbitals.shape[1]
             nelec = self.n_electrons
-            self._fci_one_rdm = fci.make_rdm1(fci.ci, norb, nelec)
+            self._fci_one_rdm = fci.make_rdm1(fci.ci, norb, nelec).T
         return self._fci_one_rdm
 
     @property
@@ -105,7 +110,8 @@ class MolecularData(MolecularData):
             fci = self._pyscf_data.get('fci', None)
             norb = self.canonical_orbitals.shape[1]
             nelec = self.n_electrons
-            self._fci_two_rdm = fci.make_rdm2(fci.ci, norb, nelec)
+            fci_rdm2 = fci.make_rdm2(fci.ci, norb, nelec)
+            self._fci_two_rdm = fci_rdm2.transpose(0, 2, 3, 1)
         return self._fci_two_rdm
 
     @property
@@ -113,11 +119,11 @@ class MolecularData(MolecularData):
         if self._ccsd_single_amps is None:
             ccsd = self._pyscf_data.get('ccsd', None)
             self._ccsd_single_amps = ccsd.t1
-        return self._ccsd_single_amps
+        return self._ccsd_single_amps.T
 
     @property
     def ccsd_double_amps(self):
         if self._ccsd_double_amps is None:
             ccsd = self._pyscf_data.get('ccsd', None)
             self._ccsd_double_amps = ccsd.t2
-        return self._ccsd_double_amps
+        return self._ccsd_double_amps.transpose(2, 0, 3, 1)

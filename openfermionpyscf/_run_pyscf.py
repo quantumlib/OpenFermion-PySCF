@@ -95,7 +95,7 @@ def compute_integrals(pyscf_molecule, pyscf_scf):
         # See PQRS convention in OpenFermion.hamiltonians._molecular_data
         # h[p,q,r,s] = (ps|qr)
         two_electron_integrals = numpy.asarray(
-            two_electron_integrals.transpose(0, 3, 1, 2), order='C')
+            two_electron_integrals.transpose(0, 2, 3, 1), order='C')
     else:
         two_electron_integrals = numpy.empty((n_orbitals, n_orbitals,
                                               n_orbitals, n_orbitals))
