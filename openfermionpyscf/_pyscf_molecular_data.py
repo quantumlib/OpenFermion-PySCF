@@ -33,9 +33,8 @@ class PyscfMolecularData(MolecularData):
     """
     def __init__(self, geometry=None, basis=None, multiplicity=None,
                  charge=0, description="", filename="", data_directory=None):
-        super(MolecularData, self).__init__(
-            geometry, basis, multiplicity,
-            charge, description, filename, data_directory)
+        MolecularData.__init__(self, geometry, basis, multiplicity,
+                               charge, description, filename, data_directory)
         self._pyscf_data = {}
 
     @property
