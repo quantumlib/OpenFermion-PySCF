@@ -22,7 +22,6 @@ from pyscf import ci, cc, fci, mp
 from openfermion.config import *
 from openfermionpyscf import PyscfMolecularData
 
-DEBUG = False
 
 def prepare_pyscf_molecule(molecule):
     """
@@ -86,73 +85,13 @@ def compute_integrals(pyscf_molecule, pyscf_scf):
     two_electron_compressed = pyscf.ao2mo.kernel(pyscf_molecule,
                                                  pyscf_scf.mo_coeff)
 
-    if not DEBUG:
-        two_electron_integrals = pyscf.ao2mo.restore(
-            1, # no permutation symmetry
-            two_electron_compressed, n_orbitals)
-        # See PQRS convention in OpenFermion.hamiltonians._molecular_data
-        # h[p,q,r,s] = (ps|qr)
-        two_electron_integrals = numpy.asarray(
-            two_electron_integrals.transpose(0, 2, 3, 1), order='C')
-    else:
-        two_electron_integrals = numpy.empty((n_orbitals, n_orbitals,
-                                              n_orbitals, n_orbitals))
-
-        # Unpack symmetry.
-        n_pairs = n_orbitals * (n_orbitals + 1) // 2
-        if two_electron_compressed.ndim == 2:
-
-            # Case of 4-fold symmetry.
-            assert(two_electron_compressed.size == n_pairs ** 2)
-            pq = 0
-            for p in range(n_orbitals):
-                for q in range(p + 1):
-                    rs = 0
-                    for r in range(n_orbitals):
-                        for s in range(r + 1):
-                            pqrs_value = two_electron_compressed[pq, rs]
-                            two_electron_integrals[p, s,
-                                                   r, q] = float(pqrs_value)
-                            two_electron_integrals[q, s,
-                                                   r, p] = float(pqrs_value)
-                            two_electron_integrals[p, r,
-                                                   s, q] = float(pqrs_value)
-                            two_electron_integrals[q, r,
-                                                   s, p] = float(pqrs_value)
-                            rs += 1
-                    pq += 1
-        else:
-
-            # Case of 8-fold symmetry.
-            assert(two_electron_compressed.size == n_pairs * (n_pairs + 1) // 2)
-            pq = 0
-            pqrs = 0
-            for p in range(n_orbitals):
-                for q in range(p + 1):
-                    rs = 0
-                    for r in range(p + 1):
-                        for s in range(r + 1):
-                            if pq >= rs:
-                                pqrs_value = two_electron_compressed[pqrs]
-                                two_electron_integrals[p, s,
-                                                       r, q] = float(pqrs_value)
-                                two_electron_integrals[q, s,
-                                                       r, p] = float(pqrs_value)
-                                two_electron_integrals[p, r,
-                                                       s, q] = float(pqrs_value)
-                                two_electron_integrals[q, r,
-                                                       s, p] = float(pqrs_value)
-                                two_electron_integrals[s, p,
-                                                       q, r] = float(pqrs_value)
-                                two_electron_integrals[s, q,
-                                                       p, r] = float(pqrs_value)
-                                two_electron_integrals[r, p,
-                                                       q, s] = float(pqrs_value)
-                                two_electron_integrals[r, q,
-                                                       p, s] = float(pqrs_value)
-                                pqrs += 1
-                            rs += 1
-                    pq += 1
+    two_electron_integrals = pyscf.ao2mo.restore(
+        1, # no permutation symmetry
+        two_electron_compressed, n_orbitals)
+    # See PQRS convention in OpenFermion.hamiltonians._molecular_data
+    # h[p,q,r,s] = (ps|qr)
+    two_electron_integrals = numpy.asarray(
+        two_electron_integrals.transpose(0, 2, 3, 1), order='C')
 
     # Return.
     return one_electron_integrals, two_electron_integrals
@@ -178,7 +117,8 @@ def run_pyscf(molecule,
         verbose: Boolean whether to print calculation results to screen.
 
     Returns:
-        molecule: The updated PyscfMolecularData object.
+        molecule: The updated PyscfMolecularData object. Note the attributes
+        of the input molecule are also updated in this function.
     """
     # Prepare pyscf molecule.
     pyscf_molecule = prepare_pyscf_molecule(molecule)
