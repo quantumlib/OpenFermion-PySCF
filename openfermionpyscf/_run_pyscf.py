@@ -10,19 +10,17 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-"""
-Driver to initialize molecular object from pyscf program.
-"""
+"""Driver to initialize molecular object from pyscf program."""
 
 from __future__ import absolute_import
 
-from functools import reduce
-
 import numpy
 import pyscf
+from functools import reduce
 from pyscf import ci, cc, fci, mp
 
 from openfermion.config import *
+from openfermionpyscf import PyscfMolecularData
 
 DEBUG = False
 
@@ -171,7 +169,7 @@ def run_pyscf(molecule,
     This function runs a pyscf calculation.
 
     Args:
-        molecule: An instance of the MolecularData class.
+        molecule: An instance of the MolecularData or PyscfMolecularData class.
         run_scf: Optional boolean to run SCF calculation.
         run_mp2: Optional boolean to run MP2 calculation.
         run_cisd: Optional boolean to run CISD calculation.
@@ -180,7 +178,7 @@ def run_pyscf(molecule,
         verbose: Boolean whether to print calculation results to screen.
 
     Returns:
-        molecule: The updated MolecularData object.
+        molecule: The updated PyscfMolecularData object.
     """
     # Prepare pyscf molecule.
     pyscf_molecule = prepare_pyscf_molecule(molecule)
@@ -258,5 +256,7 @@ def run_pyscf(molecule,
                 molecule.name, molecule.n_electrons, molecule.fci_energy))
 
     # Return updated molecule instance.
-    molecule.save()
-    return molecule
+    pyscf_molecular_data = PyscfMolecularData.__new__(PyscfMolecularData)
+    pyscf_molecular_data.__dict__.update(molecule.__dict__)
+    pyscf_molecular_data.save()
+    return pyscf_molecular_data

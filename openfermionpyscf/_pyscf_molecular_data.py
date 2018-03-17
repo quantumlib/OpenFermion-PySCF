@@ -12,14 +12,24 @@
 
 """Class to use pyscf program to access quantum chemistry data."""
 
-from functools import reduce
-
 import numpy
-from openfermion.hamiltonians import MolecularData
+from functools import reduce
 from pyscf import ao2mo
+from openfermion.hamiltonians import MolecularData
 
 
-class MolecularData(MolecularData):
+class PyscfMolecularData(MolecularData):
+
+    """A derived class from openfermion.hamiltonians.MolecularData. This class
+    is created to store the PySCF method objects as well as molecule data from
+    a fixed basis set at a fixed geometry that is obtained from PySCF
+    electronic structure packages. This class provides an interface to access
+    the PySCF Hartree-Fock, CI, Coupled-Cluster methods and their energies,
+    density matrices and wavefunctions.
+
+    Attributes:
+        _pyscf_data(dict): To store PySCF method objects temporarily.
+    """
     def __init__(self, geometry=None, basis=None, multiplicity=None,
                  charge=0, description="", filename="", data_directory=None):
         super(MolecularData, self).__init__(
@@ -29,6 +39,9 @@ class MolecularData(MolecularData):
 
     @property
     def canonical_orbitals(self):
+        """Hartree-Fock canonical orbital coefficients (represented on AO
+        basis).
+        """
         if self._canonical_orbitals is None:
             scf = self._pyscf_data.get('scf', None)
             self._canonical_orbitals = scf.mo_coeff
@@ -36,6 +49,7 @@ class MolecularData(MolecularData):
 
     @property
     def overlap_integrals(self):
+        """Overlap integrals for AO basis."""
         if self._overlap_integrals is None:
             scf = self._pyscf_data.get('scf', None)
             self._overlap_integrals = scf.get_ovlp()
@@ -43,6 +57,8 @@ class MolecularData(MolecularData):
 
     @property
     def one_body_integrals(self):
+        """A 2D array for one-body Hamiltonian (H_core) in the MO
+        representation."""
         if self._one_body_integrals is None:
             scf = self._pyscf_data.get('scf', None)
             mo = self.canonical_orbitals
@@ -52,6 +68,10 @@ class MolecularData(MolecularData):
 
     @property
     def two_body_integrals(self):
+        """A 4-dimension array for electron repulsion integrals in the MO
+        representation.  The integrals are computed as
+        h[p,q,r,s]=\int \phi_p(x)* \phi_q(y)* V_{elec-elec} \phi_r(y) \phi_s(x) dxdy
+        """
         if self._two_body_integrals is None:
             mol = self._pyscf_data.get('mol', None)
             mo = self.canonical_orbitals
@@ -68,6 +88,9 @@ class MolecularData(MolecularData):
 
     @property
     def cisd_one_rdm(self):
+        r"""A 2-dimension array for CISD one-particle density matrix in the MO
+        representation.  d[p,q] = < a^\dagger_p a_q >
+        """
         if self._cisd_one_rdm is None:
             cisd = self._pyscf_data.get('cisd', None)
 # pyscf one_rdm is computed as dm1[p,q] = <a^\dagger_q a_p>
@@ -76,6 +99,9 @@ class MolecularData(MolecularData):
 
     @property
     def cisd_two_rdm(self):
+        r"""A 4-dimension array for CISD two-particle density matrix in the MO
+        representation.  D[p,q,r,s] = < a^\dagger_p a^\dagger_q a_r a_s >
+        """
         if self._cisd_two_rdm is None:
             cisd = self._pyscf_data.get('cisd', None)
 # pyscf.ci.cisd.make_rdm2 convention
@@ -87,16 +113,25 @@ class MolecularData(MolecularData):
 
     @property
     def ccsd_one_rdm(self):
+        r"""A 2-dimension array for CCSD one-particle density matrix in the MO
+        representation.  d[p,q] = < a^\dagger_p a_q >
+        """
         ccsd = self._pyscf_data.get('ccsd', None)
         return ccsd.make_rdm1().T
 
     @property
     def ccsd_two_rdm(self):
+        r"""A 4-dimension array for CCSD two-particle density matrix in the MO
+        representation.  D[p,q,r,s] = < a^\dagger_p a^\dagger_q a_r a_s >
+        """
         ccsd = self._pyscf_data.get('ccsd', None)
         return ccsd.make_rdm2().transpose(0, 2, 3, 1)
 
     @property
     def fci_one_rdm(self):
+        r"""A 2-dimension array for FCI one-particle density matrix in the MO
+        representation.  d[p,q] = < a^\dagger_p a_q >
+        """
         if self._fci_one_rdm is None:
             fci = self._pyscf_data.get('fci', None)
             norb = self.canonical_orbitals.shape[1]
@@ -106,6 +141,9 @@ class MolecularData(MolecularData):
 
     @property
     def fci_two_rdm(self):
+        r"""A 4-dimension array for FCI two-particle density matrix in the MO
+        representation.  D[p,q,r,s] = < a^\dagger_p a^\dagger_q a_r a_s >
+        """
         if self._fci_two_rdm is None:
             fci = self._pyscf_data.get('fci', None)
             norb = self.canonical_orbitals.shape[1]
@@ -116,6 +154,9 @@ class MolecularData(MolecularData):
 
     @property
     def ccsd_single_amps(self):
+        r"""A 2-dimension array t[a,i] for CCSD single excitation amplitudes
+        where a is virtual index and i is occupied index.
+        """
         if self._ccsd_single_amps is None:
             ccsd = self._pyscf_data.get('ccsd', None)
             self._ccsd_single_amps = ccsd.t1
@@ -123,7 +164,10 @@ class MolecularData(MolecularData):
 
     @property
     def ccsd_double_amps(self):
+        r"""A 4-dimension array t[a,b,i,j] for CCSD double excitation amplitudes
+        where a, b are virtual indices and i, j are occupied indices.
+        """
         if self._ccsd_double_amps is None:
             ccsd = self._pyscf_data.get('ccsd', None)
             self._ccsd_double_amps = ccsd.t2
-        return self._ccsd_double_amps.transpose(2, 0, 3, 1)
+        return self._ccsd_double_amps.transpose(2, 3, 0, 1)

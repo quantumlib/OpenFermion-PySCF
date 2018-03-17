@@ -17,21 +17,21 @@ import numpy
 import unittest
 
 from openfermionpyscf import prepare_pyscf_molecule
-from openfermionpyscf import MolecularData
+from openfermionpyscf import PyscfMolecularData
 from pyscf import scf, mp, ci, cc, fci
 
 
-class MolecularDataTest(unittest.TestCase):
+class PyscfMolecularDataTest(unittest.TestCase):
 
     def setUp(self):
         geometry = [('H', (0., 0., 0.)), ('H', (0., 0., 0.7414))]
         basis = '6-31g'
         multiplicity = 1
         charge = 0
-        self.molecule = MolecularData(geometry,
-                                      basis,
-                                      multiplicity,
-                                      charge)
+        self.molecule = PyscfMolecularData(geometry,
+                                           basis,
+                                           multiplicity,
+                                           charge)
 
         mol = prepare_pyscf_molecule(self.molecule)
         mol.verbose = 0
