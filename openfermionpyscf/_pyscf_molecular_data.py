@@ -15,6 +15,7 @@
 import numpy
 from functools import reduce
 from pyscf import ao2mo
+from pyscf import scf
 from openfermion.hamiltonians import MolecularData
 
 
@@ -24,7 +25,7 @@ class PyscfMolecularData(MolecularData):
     is created to store the PySCF method objects as well as molecule data from
     a fixed basis set at a fixed geometry that is obtained from PySCF
     electronic structure packages. This class provides an interface to access
-    the PySCF Hartree-Fock, CI, Coupled-Cluster methods and their energies,
+    the PySCF Hartree-Fock, MP, CI, Coupled-Cluster methods and their energies,
     density matrices and wavefunctions.
 
     Attributes:
@@ -93,8 +94,19 @@ class PyscfMolecularData(MolecularData):
         """
         if self._cisd_one_rdm is None:
             cisd = self._pyscf_data.get('cisd', None)
+            if cisd is None:
+                return None
+
+            mf = self._pyscf_data.get('scf', None)
+            if isinstance(mf, scf.uhf.UHF):
+                raise ValueError('Spin trace for UCISD density matrix.')
+
+            rdm1 = cisd.make_rdm1()
+            if isinstance(mf, scf.rohf.ROHF):
+                rdm1 = rdm1[0] + rdm1[1]
+
 # pyscf one_rdm is computed as dm1[p,q] = <a^\dagger_q a_p>
-            self._cisd_one_rdm = cisd.make_rdm1().T
+            self._cisd_one_rdm = rdm1.T
         return self._cisd_one_rdm
 
     @property
@@ -104,11 +116,23 @@ class PyscfMolecularData(MolecularData):
         """
         if self._cisd_two_rdm is None:
             cisd = self._pyscf_data.get('cisd', None)
+            if cisd is None:
+                return None
+
+            mf = self._pyscf_data.get('scf', None)
+            if isinstance(mf, scf.uhf.UHF):
+                raise ValueError('Spin trace for UCISD density matrix.')
+
+            rdm2 = cisd.make_rdm2()
+            if isinstance(mf, scf.rohf.ROHF):
+                aa, ab, bb = rdm2
+                rdm2 = aa + bb + ab + ab.transpose(2, 3, 0, 1)
+
 # pyscf.ci.cisd.make_rdm2 convention
 #       dm2[p,s,q,r] = <a^\dagger_p a^\dagger_q a_r a_s>.
 # the two_body_tensor in openfermion.ops._interaction_rdm.InteractionRDM
 #       tbt[p,q,r,s] = <a^\dagger_p a^\dagger_q a_r a_s>.
-            self._cisd_two_rdm = cisd.make_rdm2().transpose(0, 2, 3, 1)
+            self._cisd_two_rdm = rdm2.transpose(0, 2, 3, 1)
         return self._cisd_two_rdm
 
     @property
@@ -117,7 +141,17 @@ class PyscfMolecularData(MolecularData):
         representation.  d[p,q] = < a^\dagger_p a_q >
         """
         ccsd = self._pyscf_data.get('ccsd', None)
-        return ccsd.make_rdm1().T
+        if ccsd is None:
+            return None
+
+        mf = self._pyscf_data.get('scf', None)
+        if isinstance(mf, scf.uhf.UHF):
+            raise ValueError('Spin trace for UCCSD density matrix.')
+
+        rdm1 = ccsd.make_rdm1()
+        if isinstance(mf, scf.rohf.ROHF):
+            rdm1 = rdm1[0] + rdm1[1]
+        return rdm1.T
 
     @property
     def ccsd_two_rdm(self):
@@ -125,7 +159,55 @@ class PyscfMolecularData(MolecularData):
         representation.  D[p,q,r,s] = < a^\dagger_p a^\dagger_q a_r a_s >
         """
         ccsd = self._pyscf_data.get('ccsd', None)
-        return ccsd.make_rdm2().transpose(0, 2, 3, 1)
+        if ccsd is None:
+            return None
+
+        mf = self._pyscf_data.get('scf', None)
+        if isinstance(mf, scf.uhf.UHF):
+            raise ValueError('Spin trace for UCCSD density matrix.')
+
+        rdm2 = ccsd.make_rdm2()
+        if isinstance(mf, scf.rohf.ROHF):
+            aa, ab, bb = rdm2
+            rdm2 = aa + bb + ab + ab.transpose(2, 3, 0, 1)
+        return rdm2.transpose(0, 2, 3, 1)
+
+    @property
+    def mp2_one_rdm(self):
+        r"""A 2-dimension array for MP2 one-particle density matrix in the MO
+        representation.  d[p,q] = < a^\dagger_p a_q >
+        """
+        mp2 = self._pyscf_data.get('mp2', None)
+        if mp2 is None:
+            return None
+
+        mf = self._pyscf_data.get('scf', None)
+        if isinstance(mf, scf.uhf.UHF):
+            raise ValueError('Spin trace for UMP2 density matrix.')
+
+        rdm1 = mp2.make_rdm1()
+        if isinstance(mf, scf.rohf.ROHF):
+            rdm1 = rdm1[0] + rdm1[1]
+        return rdm1.T
+
+    @property
+    def mp2_two_rdm(self):
+        r"""A 4-dimension array for MP2 two-particle density matrix in the MO
+        representation.  D[p,q,r,s] = < a^\dagger_p a^\dagger_q a_r a_s >
+        """
+        mp2 = self._pyscf_data.get('mp2', None)
+        if mp2 is None:
+            return None
+
+        mf = self._pyscf_data.get('scf', None)
+        if isinstance(mf, scf.uhf.UHF):
+            raise ValueError('Spin trace for UMP2 density matrix.')
+
+        rdm2 = mp2.make_rdm2()
+        if isinstance(mf, scf.rohf.ROHF):
+            aa, ab, bb = rdm2
+            rdm2 = aa + bb + ab + ab.transpose(2, 3, 0, 1)
+        return rdm2.transpose(0, 2, 3, 1)
 
     @property
     def fci_one_rdm(self):
@@ -134,6 +216,13 @@ class PyscfMolecularData(MolecularData):
         """
         if self._fci_one_rdm is None:
             fci = self._pyscf_data.get('fci', None)
+            if fci is None:
+                return None
+
+            mf = self._pyscf_data.get('scf', None)
+            if isinstance(mf, scf.uhf.UHF):
+                raise ValueError('Spin trace for UHF-FCI density matrices.')
+
             norb = self.canonical_orbitals.shape[1]
             nelec = self.n_electrons
             self._fci_one_rdm = fci.make_rdm1(fci.ci, norb, nelec).T
@@ -146,6 +235,13 @@ class PyscfMolecularData(MolecularData):
         """
         if self._fci_two_rdm is None:
             fci = self._pyscf_data.get('fci', None)
+            if fci is None:
+                return None
+
+            mf = self._pyscf_data.get('scf', None)
+            if isinstance(mf, scf.uhf.UHF):
+                raise ValueError('Spin trace for UHF-FCI density matrix.')
+
             norb = self.canonical_orbitals.shape[1]
             nelec = self.n_electrons
             fci_rdm2 = fci.make_rdm2(fci.ci, norb, nelec)
@@ -154,20 +250,36 @@ class PyscfMolecularData(MolecularData):
 
     @property
     def ccsd_single_amps(self):
-        r"""A 2-dimension array t[a,i] for CCSD single excitation amplitudes
+        r"""A 2-dimension array t[a,i] for RCCSD single excitation amplitudes
         where a is virtual index and i is occupied index.
         """
         if self._ccsd_single_amps is None:
             ccsd = self._pyscf_data.get('ccsd', None)
-            self._ccsd_single_amps = ccsd.t1
-        return self._ccsd_single_amps.T
+            if ccsd is None:
+                return None
+
+            mf = self._pyscf_data.get('scf', None)
+            if isinstance(mf, (scf.rohf.ROHF, scf.uhf.UHF)):
+                #raise ValueError('UCCSD t1 amplitudes not available.')
+                return None
+
+            self._ccsd_single_amps = ccsd.t1.T
+        return self._ccsd_single_amps
 
     @property
     def ccsd_double_amps(self):
-        r"""A 4-dimension array t[a,b,i,j] for CCSD double excitation amplitudes
+        r"""A 4-dimension array t[a,b,i,j] for RCCSD double excitation amplitudes
         where a, b are virtual indices and i, j are occupied indices.
         """
         if self._ccsd_double_amps is None:
             ccsd = self._pyscf_data.get('ccsd', None)
-            self._ccsd_double_amps = ccsd.t2
-        return self._ccsd_double_amps.transpose(2, 3, 0, 1)
+            if ccsd is None:
+                return None
+
+            mf = self._pyscf_data.get('scf', None)
+            if isinstance(mf, (scf.rohf.ROHF, scf.uhf.UHF)):
+                #raise ValueError('UCCSD t2 amplitudes not available.')
+                return None
+
+            self._ccsd_double_amps = ccsd.t2.transpose(2, 3, 0, 1)
+        return self._ccsd_double_amps
