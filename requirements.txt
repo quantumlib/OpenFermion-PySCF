@@ -1,2 +1,1 @@
 openfermion>=0.1
-pyscf>=1.4
