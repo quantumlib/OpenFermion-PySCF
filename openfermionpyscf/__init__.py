@@ -14,9 +14,10 @@
 OpenFermion plugin to interface with PySCF.
 """
 
-from ._version import __version__
-
 try:
-    from ._run_pyscf import run_pyscf
+    from ._pyscf_molecular_data import PyscfMolecularData
+    from ._run_pyscf import prepare_pyscf_molecule, run_pyscf
 except ImportError:
     raise Exception("Please install PySCF.")
+
+from ._version import __version__
