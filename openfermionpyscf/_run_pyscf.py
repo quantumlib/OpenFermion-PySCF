@@ -154,14 +154,18 @@ def run_pyscf(molecule,
 
     # Run MP2.
     if run_mp2:
-        pyscf_mp2 = pyscf.mp.MP2(pyscf_scf)
-        pyscf_mp2.verbose = 0
-        pyscf_mp2.run()
-        molecule.mp2_energy = pyscf_mp2.e_tot
-        pyscf_data['mp2'] = pyscf_mp2
-        if verbose:
-            print('MP2 energy for {} ({} electrons) is {}.'.format(
-                molecule.name, molecule.n_electrons, molecule.mp2_energy))
+        if molecule.multiplicity != 1:
+            print("WARNING: RO-MP2 is not available in PySCF.")
+        else:
+            pyscf_mp2 = pyscf.mp.MP2(pyscf_scf)
+            pyscf_mp2.verbose = 0
+            pyscf_mp2.run()
+            # molecule.mp2_energy = pyscf_mp2.e_tot  # pyscf-1.4.4 or higher
+            molecule.mp2_energy = pyscf_scf.e_tot + pyscf_mp2.e_corr
+            pyscf_data['mp2'] = pyscf_mp2
+            if verbose:
+                print('MP2 energy for {} ({} electrons) is {}.'.format(
+                    molecule.name, molecule.n_electrons, molecule.mp2_energy))
 
     # Run CISD.
     if run_cisd:
