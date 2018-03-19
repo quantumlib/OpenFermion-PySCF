@@ -1,0 +1,18 @@
+# More syntax details at: https://docs.travis-ci.com/user/customizing-the-build
+
+dist: trusty
+sudo: required
+language: python
+python:
+  - "3.6"
+group: deprecated-2017Q4
+
+git:
+  depth: 3
+
+install:
+    - pip install numpy scipy h5py pyscf openfermion
+    - pip install -r requirements.txt
+
+script:
+    - nosetests -v --ignore-files='^$'
