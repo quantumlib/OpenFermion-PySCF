@@ -1,6 +1,9 @@
 OpenFermion-PySCF
 =================
 
+.. image:: https://badge.fury.io/py/openfermionpyscf.svg
+    :target: https://badge.fury.io/py/openfermionpyscf
+
 .. image:: https://travis-ci.org/quantumlib/OpenFermion-PySCF.svg?branch=master
     :target: https://travis-ci.org/quantumlib/OpenFermion-PySCF
 
