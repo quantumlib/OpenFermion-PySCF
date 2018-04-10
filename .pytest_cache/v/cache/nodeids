@@ -1,0 +1,4 @@
+[
+  "openfermionpyscf/tests/_pyscf_molecular_data_test.py::PyscfMolecularDataTest::test_accessing_rdm",
+  "openfermionpyscf/tests/_run_pyscf_test.py::RunPyscfTest::test_run_pyscf"
+]
