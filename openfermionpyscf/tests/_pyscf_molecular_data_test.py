@@ -14,64 +14,61 @@
 from __future__ import absolute_import
 
 import numpy
-import unittest
 
 from openfermionpyscf import prepare_pyscf_molecule
 from openfermionpyscf import PyscfMolecularData
 from pyscf import scf, mp, ci, cc, fci
 
 
-class PyscfMolecularDataTest(unittest.TestCase):
+geometry = [('H', (0., 0., 0.)), ('H', (0., 0., 0.7414))]
+basis = '6-31g'
+multiplicity = 1
+charge = 0
+molecule = PyscfMolecularData(geometry,
+                              basis,
+                              multiplicity,
+                              charge)
 
-    def setUp(self):
-        geometry = [('H', (0., 0., 0.)), ('H', (0., 0., 0.7414))]
-        basis = '6-31g'
-        multiplicity = 1
-        charge = 0
-        self.molecule = PyscfMolecularData(geometry,
-                                           basis,
-                                           multiplicity,
-                                           charge)
+mol = prepare_pyscf_molecule(molecule)
+mol.verbose = 0
+molecule._pyscf_data['mol'] = mol
+molecule._pyscf_data['scf'] = mf = scf.RHF(mol).run()
+molecule._pyscf_data['mp2'] = mp.MP2(mf).run()
+molecule._pyscf_data['cisd'] = ci.CISD(mf).run()
+molecule._pyscf_data['ccsd'] = cc.CCSD(mf).run()
+molecule._pyscf_data['fci'] = fci.FCI(mf).run()
 
-        mol = prepare_pyscf_molecule(self.molecule)
-        mol.verbose = 0
-        self.molecule._pyscf_data['mol'] = mol
-        self.molecule._pyscf_data['scf'] = mf = scf.RHF(mol).run()
-        self.molecule._pyscf_data['mp2'] = mp.MP2(mf).run()
-        self.molecule._pyscf_data['cisd'] = ci.CISD(mf).run()
-        self.molecule._pyscf_data['ccsd'] = cc.CCSD(mf).run()
-        self.molecule._pyscf_data['fci'] = fci.FCI(mf).run()
 
-    def test_accessing_rdm(self):
-        molecule = self.molecule
-        mo = molecule.canonical_orbitals
-        overlap = molecule.overlap_integrals
-        h1 = molecule.one_body_integrals
-        h2 = molecule.two_body_integrals
-        mf = molecule._pyscf_data['scf']
-        e_core = mf.energy_nuc()
+def test_accessing_rdm():
+    mo = molecule.canonical_orbitals
+    overlap = molecule.overlap_integrals
+    h1 = molecule.one_body_integrals
+    h2 = molecule.two_body_integrals
+    mf = molecule._pyscf_data['scf']
+    e_core = mf.energy_nuc()
 
-        rdm1 = molecule.cisd_one_rdm
-        rdm2 = molecule.cisd_two_rdm
-        e_ref = molecule._pyscf_data['cisd'].e_tot
-        e_tot = (numpy.einsum('pq,pq', h1, rdm1) +
-                 numpy.einsum('pqrs,pqrs', h2, rdm2) * .5 + e_core)
-        self.assertAlmostEqual(e_tot, e_ref, 9)
+    rdm1 = molecule.cisd_one_rdm
+    rdm2 = molecule.cisd_two_rdm
+    e_ref = molecule._pyscf_data['cisd'].e_tot
+    e_tot = (numpy.einsum('pq,pq', h1, rdm1) +
+             numpy.einsum('pqrs,pqrs', h2, rdm2) * .5 + e_core)
+    numpy.testing.assert_almost_equal(e_tot, e_ref, 9)
 
-        rdm1 = molecule.ccsd_one_rdm
-        rdm2 = molecule.ccsd_two_rdm
-        e_ref = molecule._pyscf_data['ccsd'].e_tot
-        e_tot = (numpy.einsum('pq,pq', h1, rdm1) +
-                 numpy.einsum('pqrs,pqrs', h2, rdm2) * .5 + e_core)
-        self.assertAlmostEqual(e_tot, e_ref, 7)
+    rdm1 = molecule.ccsd_one_rdm
+    rdm2 = molecule.ccsd_two_rdm
+    e_ref = molecule._pyscf_data['ccsd'].e_tot
+    e_tot = (numpy.einsum('pq,pq', h1, rdm1) +
+             numpy.einsum('pqrs,pqrs', h2, rdm2) * .5 + e_core)
+    numpy.testing.assert_almost_equal(e_tot, e_ref, 7)
 
-        rdm1 = molecule.fci_one_rdm
-        rdm2 = molecule.fci_two_rdm
-        #e_ref = molecule._pyscf_data['fci'].e_tot
-        e_tot = (numpy.einsum('pq,pq', h1, rdm1) +
-                 numpy.einsum('pqrs,pqrs', h2, rdm2) * .5 + e_core)
-        self.assertAlmostEqual(e_tot, -1.1516827321, 9)
+    rdm1 = molecule.fci_one_rdm
+    rdm2 = molecule.fci_two_rdm
+    #e_ref = molecule._pyscf_data['fci'].e_tot
+    e_tot = (numpy.einsum('pq,pq', h1, rdm1) +
+             numpy.einsum('pqrs,pqrs', h2, rdm2) * .5 + e_core)
+    numpy.testing.assert_almost_equal(e_tot, -1.1516827321, 9)
 
-        ccsd_t1 = molecule.ccsd_single_amps
-        ccsd_t2 = molecule.ccsd_double_amps
+    ccsd_t1 = molecule.ccsd_single_amps
+    ccsd_t2 = molecule.ccsd_double_amps
+
 
