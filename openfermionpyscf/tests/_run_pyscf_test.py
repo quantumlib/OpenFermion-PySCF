@@ -13,33 +13,27 @@
 """Tests many modules to call pyscf functions."""
 from __future__ import absolute_import
 
-import numpy
-import unittest
-
 from openfermion.hamiltonians import MolecularData
 from openfermionpyscf import run_pyscf
 from openfermionpyscf import PyscfMolecularData
 
 
-class RunPyscfTest(unittest.TestCase):
+geometry = [('H', (0., 0., 0.)), ('H', (0., 0., 0.7414))]
+basis = '6-31g'
+multiplicity = 1
+charge = 0
+molecule = MolecularData(geometry,
+                         basis,
+                         multiplicity,
+                         charge)
 
-    def setUp(self):
-        geometry = [('H', (0., 0., 0.)), ('H', (0., 0., 0.7414))]
-        basis = '6-31g'
-        multiplicity = 1
-        charge = 0
-        self.molecule = MolecularData(geometry,
-                                      basis,
-                                      multiplicity,
-                                      charge)
 
-    def test_run_pyscf(self):
-        new_mole = run_pyscf(self.molecule,
-                             run_scf=True,
-                             run_mp2=True,
-                             run_cisd=True,
-                             run_ccsd=True,
-                             run_fci=True,
-                             verbose=1)
-        self.assertTrue(isinstance(new_mole, PyscfMolecularData))
-
+def test_run_pyscf():
+    new_mole = run_pyscf(molecule,
+                         run_scf=True,
+                         run_mp2=True,
+                         run_cisd=True,
+                         run_ccsd=True,
+                         run_fci=True,
+                         verbose=1)
+    assert isinstance(new_mole, PyscfMolecularData)
