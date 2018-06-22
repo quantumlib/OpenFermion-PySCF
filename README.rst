@@ -73,10 +73,13 @@ Authors
 `Tarini Hardikar <https://github.com/TariniHardikar>`__ (Dartmouth),
 `Vojtĕch Havlíček <https://github.com/VojtaHavlicek>`__ (Oxford),
 `Cupjin Huang <https://github.com/pertoX4726>`__ (University of Michigan),
+`Josh Izaac <https://github.com/josh146>`__ (Xanadu),
 `Zhang Jiang <https://ti.arc.nasa.gov/profile/zjiang3>`__ (NASA),
+`Xinle Liu <https://github.com/sheilaliuxl>`__ (Google),
+`Sam McArdle <https://github.com/sammcardle30>`__ (Oxford),
+`Matthew Neeley <https://github.com/maffoo>`__ (Google),
 `Thomas O'Brien <https://github.com/obriente>`__ (Leiden University),
 `Isil Ozfidan <https://github.com/conta877>`__ (D-Wave Systems),
-`Matthew Neeley <https://github.com/maffoo>`__ (Google),
 `Max Radin <https://github.com/max-radin>`__ (UC Santa Barbara),
 `Jhonathan Romero <https://github.com/jromerofontalvo>`__ (Harvard),
 `Nicholas Rubin <https://github.com/ncrubin>`__ (Rigetti),
@@ -86,7 +89,9 @@ Authors
 `Hannah Sim <https://github.com/hsim13372>`__ (Harvard),
 `Mark Steudtner <https://github.com/msteudtner>`__  (Leiden University),
 `Qiming Sun <https://github.com/sunqm>`__ (Caltech),
-`Wei Sun <https://github.com/Spaceenter>`__ (Google) and
+`Wei Sun <https://github.com/Spaceenter>`__ (Google),
+`Daochen Wang <https://github.com/daochenw>`__ (River Lane Research),
+`Chris Winkler <https://github.com/quid256>`__ (University of Chicago) and
 `Fang Zhang <https://github.com/fangzh-umich>`__ (University of Michigan).
 
 How to cite
@@ -95,10 +100,11 @@ When using OpenFermion-PySCF for research projects, please cite:
 
     Jarrod R. McClean, Ian D. Kivlichan, Kevin J. Sung, Damian S. Steiger,
     Yudong Cao, Chengyu Dai, E. Schuyler Fried, Craig Gidney, Brendan Gimby,
-    Thomas Häner, Tarini Hardikar, Vojtĕch Havlíček, Cupjin Huang, Zhang Jiang,
-    Matthew Neeley, Thomas O'Brien, Isil Ozfidan, Maxwell D. Radin, Jhonathan Romero,
-    Nicholas Rubin, Nicolas P. D. Sawaya, Kanav Setia, Sukin Sim, Mark Steudtner,
-    Wei Sun, Fang Zhang and Ryan Babbush.
+    Pranav Gokhale, Thomas Häner, Tarini Hardikar, Vojtĕch Havlíček,
+    Cupjin Huang, Josh Izaac, Zhang Jiang, Xinle Liu, Matthew Neeley,
+    Thomas O'Brien, Isil Ozfidan, Maxwell D. Radin, Jhonathan Romero,
+    Nicholas Rubin, Nicolas P. D. Sawaya, Kanav Setia, Sukin Sim,
+    Mark Steudtner, Qiming Sun, Wei Sun, Fang Zhang and Ryan Babbush.
     *OpenFermion: The Electronic Structure Package for Quantum Computers*.
     `arXiv:1710.07629 <https://arxiv.org/abs/1710.07629>`__. 2017.
 
