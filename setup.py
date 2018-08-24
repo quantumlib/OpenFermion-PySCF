@@ -1,10 +1,12 @@
+import io
+
 from setuptools import setup, find_packages
 
 # This reads the __version__ variable from openfermionpyscf/_version.py
 exec(open('openfermionpyscf/_version.py').read())
 
 # Readme file as long_description:
-long_description = open('README.rst').read()
+long_description = io.open('README.rst', encoding='utf-8').read()
 
 # Read in requirements.txt
 requirements = open('requirements.txt').readlines()
