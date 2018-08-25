@@ -18,7 +18,6 @@ from functools import reduce
 
 import numpy
 import pyscf
-from pyscf import ci, cc, fci, mp
 
 from openfermion import MolecularData
 from openfermionpyscf import PyscfMolecularData
