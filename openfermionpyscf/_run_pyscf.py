@@ -18,6 +18,7 @@ from functools import reduce
 
 import numpy
 import pyscf
+from pyscf import gto, scf, ao2mo, ci, cc, fci, mp
 
 from openfermion import MolecularData
 from openfermionpyscf import PyscfMolecularData
@@ -33,7 +34,7 @@ def prepare_pyscf_molecule(molecule):
     Returns:
         pyscf_molecule: A pyscf molecule instance.
     """
-    pyscf_molecule = pyscf.gto.Mole()
+    pyscf_molecule = gto.Mole()
     pyscf_molecule.atom = molecule.geometry
     pyscf_molecule.basis = molecule.basis
     pyscf_molecule.spin = molecule.multiplicity - 1
@@ -55,9 +56,9 @@ def compute_scf(pyscf_molecule):
         pyscf_scf: A PySCF "SCF" calculation object.
     """
     if pyscf_molecule.spin:
-        pyscf_scf = pyscf.scf.ROHF(pyscf_molecule)
+        pyscf_scf = scf.ROHF(pyscf_molecule)
     else:
-        pyscf_scf = pyscf.scf.RHF(pyscf_molecule)
+        pyscf_scf = scf.RHF(pyscf_molecule)
     return pyscf_scf
 
 
@@ -82,10 +83,10 @@ def compute_integrals(pyscf_molecule, pyscf_scf):
         n_orbitals, n_orbitals).astype(float)
 
     # Get two electron integrals in compressed format.
-    two_electron_compressed = pyscf.ao2mo.kernel(pyscf_molecule,
-                                                 pyscf_scf.mo_coeff)
+    two_electron_compressed = ao2mo.kernel(pyscf_molecule,
+                                           pyscf_scf.mo_coeff)
 
-    two_electron_integrals = pyscf.ao2mo.restore(
+    two_electron_integrals = ao2mo.restore(
         1, # no permutation symmetry
         two_electron_compressed, n_orbitals)
     # See PQRS convention in OpenFermion.hamiltonians._molecular_data
@@ -157,7 +158,7 @@ def run_pyscf(molecule,
         if molecule.multiplicity != 1:
             print("WARNING: RO-MP2 is not available in PySCF.")
         else:
-            pyscf_mp2 = pyscf.mp.MP2(pyscf_scf)
+            pyscf_mp2 = mp.MP2(pyscf_scf)
             pyscf_mp2.verbose = 0
             pyscf_mp2.run()
             # molecule.mp2_energy = pyscf_mp2.e_tot  # pyscf-1.4.4 or higher
@@ -169,7 +170,7 @@ def run_pyscf(molecule,
 
     # Run CISD.
     if run_cisd:
-        pyscf_cisd = pyscf.ci.CISD(pyscf_scf)
+        pyscf_cisd = ci.CISD(pyscf_scf)
         pyscf_cisd.verbose = 0
         pyscf_cisd.run()
         molecule.cisd_energy = pyscf_cisd.e_tot
@@ -180,7 +181,7 @@ def run_pyscf(molecule,
 
     # Run CCSD.
     if run_ccsd:
-        pyscf_ccsd = pyscf.cc.CCSD(pyscf_scf)
+        pyscf_ccsd = cc.CCSD(pyscf_scf)
         pyscf_ccsd.verbose = 0
         pyscf_ccsd.run()
         molecule.ccsd_energy = pyscf_ccsd.e_tot
@@ -191,7 +192,7 @@ def run_pyscf(molecule,
 
     # Run FCI.
     if run_fci:
-        pyscf_fci = pyscf.fci.FCI(pyscf_molecule, pyscf_scf.mo_coeff)
+        pyscf_fci = fci.FCI(pyscf_molecule, pyscf_scf.mo_coeff)
         pyscf_fci.verbose = 0
         molecule.fci_energy = pyscf_fci.kernel()[0]
         pyscf_data['fci'] = pyscf_fci
