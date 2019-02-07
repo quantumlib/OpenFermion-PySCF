@@ -16,6 +16,7 @@ import numpy
 from functools import reduce
 from pyscf import ao2mo
 from pyscf import scf
+from pyscf.cc.addons import spatial2spin
 from openfermion.hamiltonians import MolecularData
 
 
@@ -249,7 +250,7 @@ class PyscfMolecularData(MolecularData):
 
     @property
     def ccsd_single_amps(self):
-        r"""A 2-dimension array t[a,i] for RCCSD single excitation amplitudes
+        r"""A 2-dimension array t[a,i] for CCSD single excitation amplitudes
         where a is virtual index and i is occupied index.
         """
         if self._ccsd_single_amps is None:
@@ -257,17 +258,17 @@ class PyscfMolecularData(MolecularData):
             if ccsd is None:
                 return None
 
-            mf = self._pyscf_data.get('scf', None)
-            if isinstance(mf, (scf.rohf.ROHF, scf.uhf.UHF)):
-                #raise ValueError('UCCSD t1 amplitudes not available.')
-                return None
+            t1 = spatial2spin(ccsd.t1)
+            no, nv = t1.shape
+            nmo = no + nv
+            self._ccsd_single_amps = numpy.zeros((nmo, nmo))
+            self._ccsd_single_amps[no:,:no] = t1.T
 
-            self._ccsd_single_amps = ccsd.t1.T
         return self._ccsd_single_amps
 
     @property
     def ccsd_double_amps(self):
-        r"""A 4-dimension array t[a,b,i,j] for RCCSD double excitation amplitudes
+        r"""A 4-dimension array t[a,i,b,j] for CCSD double excitation amplitudes
         where a, b are virtual indices and i, j are occupied indices.
         """
         if self._ccsd_double_amps is None:
@@ -275,10 +276,10 @@ class PyscfMolecularData(MolecularData):
             if ccsd is None:
                 return None
 
-            mf = self._pyscf_data.get('scf', None)
-            if isinstance(mf, (scf.rohf.ROHF, scf.uhf.UHF)):
-                #raise ValueError('UCCSD t2 amplitudes not available.')
-                return None
+            t2 = spatial2spin(ccsd.t2)
+            no, nv = t2.shape[1:3]
+            nmo = no + nv
+            self._ccsd_single_amps = numpy.zeros((nmo, nmo, nmo, nmo))
+            self._ccsd_single_amps[no:,:no,no:,:no] = t2.transpose(2,0,3,1)
 
-            self._ccsd_double_amps = ccsd.t2.transpose(2, 3, 0, 1)
         return self._ccsd_double_amps
