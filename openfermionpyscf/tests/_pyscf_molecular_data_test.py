@@ -68,7 +68,26 @@ def test_accessing_rdm():
              numpy.einsum('pqrs,pqrs', h2, rdm2) * .5 + e_core)
     numpy.testing.assert_almost_equal(e_tot, -1.1516827321, 9)
 
+def test_ccsd_amps():
+    mo = molecule.canonical_orbitals
+    h2 = molecule.two_body_integrals
+    mf = molecule._pyscf_data['scf']
+
     ccsd_t1 = molecule.ccsd_single_amps
     ccsd_t2 = molecule.ccsd_double_amps
 
+    nmo = mo.shape[1]
+    g_fock = numpy.zeros((nmo*2,nmo*2))
+    g_fock[::2,::2] = g_fock[1::2,1::2] = mo.T.dot(mf.get_fock()).dot(mo)
+    g_h2 = numpy.zeros((nmo*2,nmo*2,nmo*2,nmo*2))
+    g_h2[ ::2, ::2, ::2, ::2] = h2
+    g_h2[1::2,1::2, ::2, ::2] = h2
+    g_h2[ ::2, ::2,1::2,1::2] = h2
+    g_h2[1::2,1::2,1::2,1::2] = h2
+    g_h2 = g_h2 - g_h2.transpose(0,3,2,1)
 
+    e_corr_ref = molecule._pyscf_data['ccsd'].e_corr
+    e_corr = (numpy.einsum('ij,ji->', g_fock, ccsd_t1)
+              + .5 * numpy.einsum('ijkl,jilk->', g_h2, ccsd_t2)
+              + .5 * numpy.einsum('ijkl,ji,lk->', g_h2, ccsd_t1, ccsd_t1))
+    numpy.testing.assert_almost_equal(e_corr_ref, e_corr, 9)
