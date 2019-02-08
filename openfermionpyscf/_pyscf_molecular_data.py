@@ -279,7 +279,7 @@ class PyscfMolecularData(MolecularData):
             t2 = spatial2spin(ccsd.t2)
             no, nv = t2.shape[1:3]
             nmo = no + nv
-            self._ccsd_single_amps = numpy.zeros((nmo, nmo, nmo, nmo))
-            self._ccsd_single_amps[no:,:no,no:,:no] = t2.transpose(2,0,3,1)
+            self._ccsd_double_amps = numpy.zeros((nmo, nmo, nmo, nmo))
+            self._ccsd_double_amps[no:,:no,no:,:no] = .5 * t2.transpose(2,0,3,1)
 
         return self._ccsd_double_amps
