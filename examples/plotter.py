@@ -15,8 +15,8 @@ import matplotlib.pyplot
 import numpy
 import warnings
 
-from openfermion.hamiltonians import (make_atom, make_atomic_ring,
-                                      MolecularData, periodic_table)
+from openfermion.chem import (make_atom, make_atomic_ring,
+                              MolecularData, periodic_table)
 
 
 def latex_name(molecule):
