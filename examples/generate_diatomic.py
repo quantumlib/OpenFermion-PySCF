@@ -11,9 +11,7 @@
 #   limitations under the License.
 
 """This is a simple script for generating data."""
-import os
-
-from openfermion.chem import MolecularData
+from openfermion import MolecularData
 
 from openfermionpyscf import run_pyscf
 

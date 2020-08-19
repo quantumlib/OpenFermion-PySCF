@@ -12,11 +12,9 @@
 
 """These functions compare properties of different molecules."""
 import matplotlib.pyplot
-import numpy
-import warnings
 
-from openfermion.chem import (make_atom, make_atomic_ring,
-                              MolecularData, periodic_table)
+from openfermion import (make_atomic_ring, periodic_hash_table,
+                         MolecularData, periodic_table)
 
 
 def latex_name(molecule):
@@ -29,8 +27,7 @@ def latex_name(molecule):
     atoms = [item[0] for item in molecule.geometry]
     atom_charge_info = [(atom, atoms.count(atom)) for atom in set(atoms)]
     sorted_info = sorted(atom_charge_info,
-                         key=lambda atom: molecular_data.
-                         _PERIODIC_HASH_TABLE[atom[0]])
+                         key=lambda atom: periodic_hash_table[atom[0]])
 
     # Name molecule and return.
     name = '{}$_{}$'.format(sorted_info[0][0], sorted_info[0][1])

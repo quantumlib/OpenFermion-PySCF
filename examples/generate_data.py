@@ -13,7 +13,7 @@
 """This is a simple script for generating data."""
 import os
 
-from openfermion.chem import make_atomic_ring
+from openfermion import make_atomic_ring
 
 from openfermionpyscf import run_pyscf
 
