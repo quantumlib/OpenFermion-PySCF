@@ -1,3 +1,2 @@
 openfermion>=0.5
 pyscf
-pytest
