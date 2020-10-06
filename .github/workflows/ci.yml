@@ -46,8 +46,6 @@ jobs:
       - name: Install requirements
         run: |
           pip install -r requirements.txt
-          pip install -r dev_tools/conf/pip-list-dev-tools.txt
-          git config --global user.name ${GITHUB_ACTOR}
       - name: Pytest check
         run: |
           pip install pytest
