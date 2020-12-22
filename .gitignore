@@ -73,3 +73,6 @@ ENV/
 /site
 
 *.lprof
+
+# no pycharm
+.idea*

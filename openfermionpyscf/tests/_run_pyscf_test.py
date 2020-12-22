@@ -13,7 +13,7 @@
 """Tests many modules to call pyscf functions."""
 from __future__ import absolute_import
 
-from openfermion.hamiltonians import MolecularData
+from openfermion.chem import MolecularData
 from openfermionpyscf import run_pyscf
 from openfermionpyscf import PyscfMolecularData
 
