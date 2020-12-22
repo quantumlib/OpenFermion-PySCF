@@ -4,8 +4,9 @@ OpenFermion-PySCF
 .. image:: https://badge.fury.io/py/openfermionpyscf.svg
     :target: https://badge.fury.io/py/openfermionpyscf
 
-.. image:: https://travis-ci.org/quantumlib/OpenFermion-PySCF.svg?branch=master
-    :target: https://travis-ci.org/quantumlib/OpenFermion-PySCF
+.. image:: https://github.com/quantumlib/OpenFermion-PySCF/workflows/Continuous%20Integration/badge.svg
+    :target: https://github.com/quantumlib/OpenFermion-PySCF/actions?query=workflow%3A%22Continuous+Integration%22
+
 
 `OpenFermion <http://openfermion.org>`__ is an open source library (licensed under Apache 2) for compiling and analyzing quantum algorithms which simulate fermionic systems.
 This plugin library allows the electronic structure package `PySCF <http://github.com/sunqm/pyscf>`__ (licensed under BSD-2-Clause) to interface with OpenFermion.

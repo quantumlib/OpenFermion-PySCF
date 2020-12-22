@@ -17,7 +17,6 @@ from __future__ import absolute_import
 from functools import reduce
 
 import numpy
-import pyscf
 from pyscf import gto, scf, ao2mo, ci, cc, fci, mp
 
 from openfermion import MolecularData
