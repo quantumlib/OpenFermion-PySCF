@@ -13,7 +13,7 @@
 """This is a simple script for generating data."""
 import os
 
-from openfermion.hamiltonians import MolecularData
+from openfermion.chem import MolecularData
 
 from openfermionpyscf import run_pyscf
 
