@@ -4,8 +4,9 @@ OpenFermion-PySCF
 .. image:: https://badge.fury.io/py/openfermionpyscf.svg
     :target: https://badge.fury.io/py/openfermionpyscf
 
-.. image:: https://travis-ci.org/quantumlib/OpenFermion-PySCF.svg?branch=master
-    :target: https://travis-ci.org/quantumlib/OpenFermion-PySCF
+.. image:: https://github.com/quantumlib/OpenFermion-PySCF/workflows/Continuous%20Integration/badge.svg
+    :target: https://github.com/quantumlib/OpenFermion-PySCF/actions?query=workflow%3A%22Continuous+Integration%22
+
 
 `OpenFermion <http://openfermion.org>`__ is an open source library (licensed under Apache 2) for compiling and analyzing quantum algorithms which simulate fermionic systems.
 This plugin library allows the electronic structure package `PySCF <http://github.com/sunqm/pyscf>`__ (licensed under BSD-2-Clause) to interface with OpenFermion.
@@ -59,9 +60,8 @@ Authors
 
 `Ryan Babbush <http://ryanbabbush.com>`__ (Google),
 `Jarrod McClean <http://jarrodmcclean.com>`__ (Google),
+`Kevin Sung <https://github.com/kevinsung>`__ (University of Michigan),
 `Ian Kivlichan <http://aspuru.chem.harvard.edu/ian-kivlichan/>`__ (Harvard),
-`Kevin J. Sung <https://github.com/kevinsung>`__ (University of Michigan),
-`Damian Steiger <https://github.com/damiansteiger>`__ (ETH Zurich),
 `Dave Bacon <https://github.com/dabacon>`__ (Google),
 `Yudong Cao <https://github.com/yudongcao>`__ (Harvard),
 `Chengyu Dai <https://github.com/jdaaph>`__ (University of Michigan),
@@ -72,6 +72,7 @@ Authors
 `Thomas Häner <https://github.com/thomashaener>`__ (ETH Zurich),
 `Tarini Hardikar <https://github.com/TariniHardikar>`__ (Dartmouth),
 `Vojtĕch Havlíček <https://github.com/VojtaHavlicek>`__ (Oxford),
+`Oscar Higgott <https://github.com/oscarhiggott>`__ (University College London),
 `Cupjin Huang <https://github.com/pertoX4726>`__ (University of Michigan),
 `Josh Izaac <https://github.com/josh146>`__ (Xanadu),
 `Zhang Jiang <https://ti.arc.nasa.gov/profile/zjiang3>`__ (NASA),
@@ -79,14 +80,16 @@ Authors
 `Sam McArdle <https://github.com/sammcardle30>`__ (Oxford),
 `Matthew Neeley <https://github.com/maffoo>`__ (Google),
 `Thomas O'Brien <https://github.com/obriente>`__ (Leiden University),
+`Bryan O'Gorman <https://ti.arc.nasa.gov/profile/bogorman>`__ (UC Berkeley, NASA),
 `Isil Ozfidan <https://github.com/conta877>`__ (D-Wave Systems),
 `Max Radin <https://github.com/max-radin>`__ (UC Santa Barbara),
 `Jhonathan Romero <https://github.com/jromerofontalvo>`__ (Harvard),
-`Nicholas Rubin <https://github.com/ncrubin>`__ (Rigetti),
+`Nicholas Rubin <https://github.com/ncrubin>`__ (Google),
 `Daniel Sank <https://github.com/DanielSank>`__ (Google),
 `Nicolas Sawaya <https://github.com/nicolassawaya>`__ (Harvard),
 `Kanav Setia <https://github.com/kanavsetia>`__ (Dartmouth),
 `Hannah Sim <https://github.com/hsim13372>`__ (Harvard),
+`Damian Steiger <https://github.com/damiansteiger>`__ (ETH Zurich),
 `Mark Steudtner <https://github.com/msteudtner>`__  (Leiden University),
 `Qiming Sun <https://github.com/sunqm>`__ (Caltech),
 `Wei Sun <https://github.com/Spaceenter>`__ (Google),
@@ -98,13 +101,14 @@ How to cite
 -----------
 When using OpenFermion-PySCF for research projects, please cite:
 
-    Jarrod R. McClean, Ian D. Kivlichan, Kevin J. Sung, Damian S. Steiger,
-    Yudong Cao, Chengyu Dai, E. Schuyler Fried, Craig Gidney, Brendan Gimby,
+    Jarrod R. McClean, Kevin J. Sung, Ian D. Kivlichan, Yudong Cao,
+    Chengyu Dai, E. Schuyler Fried, Craig Gidney, Brendan Gimby,
     Pranav Gokhale, Thomas Häner, Tarini Hardikar, Vojtĕch Havlíček,
-    Cupjin Huang, Josh Izaac, Zhang Jiang, Xinle Liu, Matthew Neeley,
-    Thomas O'Brien, Isil Ozfidan, Maxwell D. Radin, Jhonathan Romero,
-    Nicholas Rubin, Nicolas P. D. Sawaya, Kanav Setia, Sukin Sim,
-    Mark Steudtner, Qiming Sun, Wei Sun, Fang Zhang and Ryan Babbush.
+    Oscar Higgott, Cupjin Huang, Josh Izaac, Zhang Jiang, Xinle Liu,
+    Sam McArdle, Matthew Neeley, Thomas O'Brien, Bryan O'Gorman, Isil Ozfidan,
+    Maxwell D. Radin, Jhonathan Romero, Nicholas Rubin, Nicolas P. D. Sawaya,
+    Kanav Setia, Sukin Sim, Damian S. Steiger, Mark Steudtner, Qiming Sun,
+    Wei Sun, Daochen Wang, Fang Zhang and Ryan Babbush.
     *OpenFermion: The Electronic Structure Package for Quantum Computers*.
     `arXiv:1710.07629 <https://arxiv.org/abs/1710.07629>`__. 2017.
 

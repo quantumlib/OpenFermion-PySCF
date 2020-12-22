@@ -17,7 +17,7 @@ from functools import reduce
 from pyscf import ao2mo
 from pyscf import scf
 from pyscf.cc.addons import spatial2spin
-from openfermion.hamiltonians import MolecularData
+from openfermion.chem import MolecularData
 
 
 class PyscfMolecularData(MolecularData):
