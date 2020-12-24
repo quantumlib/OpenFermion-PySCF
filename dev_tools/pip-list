@@ -1,0 +1,3 @@
+pytest~=6.2.1
+pyscf~=1.7.5.1
+openfermion~=1.0.0
