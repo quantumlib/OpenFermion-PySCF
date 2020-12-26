@@ -1,2 +1,2 @@
-openfermion>=0.5
+openfermion>=1.0
 pyscf
