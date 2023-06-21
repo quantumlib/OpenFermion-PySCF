@@ -17,6 +17,7 @@ from __future__ import absolute_import
 from functools import reduce
 
 import numpy
+import scipy
 from pyscf import gto, scf, ao2mo, ci, cc, fci, mp
 
 from openfermion import MolecularData
@@ -44,24 +45,76 @@ def prepare_pyscf_molecule(molecule):
     return pyscf_molecule
 
 
-def compute_scf(pyscf_molecule):
+def compute_scf(pyscf_molecule, do_uhf=False):
     """
     Perform a Hartree-Fock calculation.
 
     Args:
         pyscf_molecule: A pyscf molecule instance.
+        do_uhf: Perform unrestricted HF.
 
     Returns:
         pyscf_scf: A PySCF "SCF" calculation object.
     """
-    if pyscf_molecule.spin:
-        pyscf_scf = scf.ROHF(pyscf_molecule)
+    if do_uhf:
+        pyscf_scf = scf.UHF(pyscf_molecule)
+        pyscf_scf.conv_tol = 1e-6
     else:
-        pyscf_scf = scf.RHF(pyscf_molecule)
+        if pyscf_molecule.spin:
+            pyscf_scf = scf.ROHF(pyscf_molecule)
+        else:
+            pyscf_scf = scf.RHF(pyscf_molecule)
     return pyscf_scf
 
 
-def compute_integrals(pyscf_molecule, pyscf_scf):
+def mixed_orbitals_density_matrix(pyscf_molecule, mixing_parameter=numpy.pi/4):
+    """
+    Calculates a density matrix to initialize the UHF calculation
+
+    Args:
+        pyscf_molecule: A pyscf molecule instance.
+        mixing_parameter: Mixing parameter.
+
+    Returns:
+        dm: Density matrix.
+    """
+    rhf = scf.RHF(pyscf_molecule)
+    h_core = pyscf_molecule.intor_symmetric('int1e_kin') + pyscf_molecule.intor_symmetric('int1e_nuc')
+    overlap_matrix = rhf.get_ovlp(pyscf_molecule)
+    mo_energy, mo_coeff = rhf.eig(h_core, overlap_matrix)
+    mo_occ = rhf.get_occ(mo_energy=mo_energy, mo_coeff=mo_coeff)
+
+    homo_idx = 0
+    lumo_idx = 1
+
+    for i in range(len(mo_occ) - 1):
+        if mo_occ[i] > 0 and mo_occ[i + 1] < 0:
+            homo_idx = i
+            lumo_idx = i + 1
+
+    psi_homo = mo_coeff[:, homo_idx]
+    psi_lumo = mo_coeff[:, lumo_idx]
+
+    Ca = numpy.zeros_like(mo_coeff)
+    Cb = numpy.zeros_like(mo_coeff)
+
+    # mix homo and lumo of alpha and beta coefficients
+    for k in range(mo_coeff.shape[0]):
+        if k == homo_idx:
+            Ca[:, k] = numpy.cos(mixing_parameter) * psi_homo + numpy.sin(mixing_parameter) * psi_lumo
+            Cb[:, k] = numpy.cos(mixing_parameter) * psi_homo - numpy.sin(mixing_parameter) * psi_lumo
+            continue
+        if k == lumo_idx:
+            Ca[:, k] = -numpy.sin(mixing_parameter) * psi_homo + numpy.cos(mixing_parameter) * psi_lumo
+            Cb[:, k] = numpy.sin(mixing_parameter) * psi_homo + numpy.cos(mixing_parameter) * psi_lumo
+            continue
+        Ca[:, k] = mo_coeff[:, k]
+        Cb[:, k] = mo_coeff[:, k]
+
+    dm = scf.UHF(pyscf_molecule).make_rdm1((Ca, Cb), (mo_occ, mo_occ))
+    return dm
+
+def compute_integrals(pyscf_molecule, orb_coeff):
     """
     Compute the 1-electron and 2-electron integrals.
 
@@ -74,16 +127,14 @@ def compute_integrals(pyscf_molecule, pyscf_scf):
         two_electron_integrals: An N by N by N by N array storing h_{pqrs}.
     """
     # Get one electrons integrals.
-    n_orbitals = pyscf_scf.mo_coeff.shape[1]
-    one_electron_compressed = reduce(numpy.dot, (pyscf_scf.mo_coeff.T,
-                                                 pyscf_scf.get_hcore(),
-                                                 pyscf_scf.mo_coeff))
+    n_orbitals = orb_coeff.shape[1]
+    h_core = pyscf_molecule.intor_symmetric('int1e_kin') + pyscf_molecule.intor_symmetric('int1e_nuc')
+    one_electron_compressed = reduce(numpy.dot, (orb_coeff.T, h_core, orb_coeff))
     one_electron_integrals = one_electron_compressed.reshape(
         n_orbitals, n_orbitals).astype(float)
 
     # Get two electron integrals in compressed format.
-    two_electron_compressed = ao2mo.kernel(pyscf_molecule,
-                                           pyscf_scf.mo_coeff)
+    two_electron_compressed = ao2mo.kernel(pyscf_molecule, orb_coeff)
 
     two_electron_integrals = ao2mo.restore(
         1, # no permutation symmetry
@@ -98,6 +149,7 @@ def compute_integrals(pyscf_molecule, pyscf_scf):
 
 
 def run_pyscf(molecule,
+              nat_orb=True,
               run_scf=True,
               run_mp2=False,
               run_cisd=False,
@@ -127,9 +179,25 @@ def run_pyscf(molecule,
     molecule.nuclear_repulsion = float(pyscf_molecule.energy_nuc())
 
     # Run SCF.
-    pyscf_scf = compute_scf(pyscf_molecule)
-    pyscf_scf.verbose = 0
-    pyscf_scf.run()
+    if nat_orb:
+        pyscf_scf = compute_scf(pyscf_molecule, do_uhf=True)
+        pyscf_scf.verbose = 0
+        pyscf_scf.run(mixed_orbitals_density_matrix(pyscf_molecule))
+
+        # Calculation of natural orbitals
+        dm_uhf = pyscf_scf.make_rdm1(pyscf_scf.mo_coeff, pyscf_scf.mo_occ)
+        dm_tot = dm_uhf[0] + dm_uhf[1]
+        overlap_matrix = pyscf_scf.get_ovlp(pyscf_molecule)
+        nat_occ, nat_coeff = scipy.linalg.eigh(a=dm_tot, b=overlap_matrix, type=2)
+
+        # Ordering by occupancies
+        idx = nat_occ.argsort()[::-1]
+        nat_coeff = nat_coeff[:, idx]
+    else:
+        pyscf_scf = compute_scf(pyscf_molecule)
+        pyscf_scf.verbose = 0
+        pyscf_scf.run()
+
     molecule.hf_energy = float(pyscf_scf.e_tot)
     if verbose:
         print('Hartree-Fock energy for {} ({} electrons) is {}.'.format(
@@ -142,12 +210,14 @@ def run_pyscf(molecule,
     pyscf_data['scf'] = pyscf_scf
 
     # Populate fields.
-    molecule.canonical_orbitals = pyscf_scf.mo_coeff.astype(float)
-    molecule.orbital_energies = pyscf_scf.mo_energy.astype(float)
+    if nat_orb:
+        molecule.canonical_orbitals = nat_coeff.astype(float)
+    else:
+        molecule.canonical_orbitals = pyscf_scf.mo_coeff.astype(float)
+        molecule.orbital_energies = pyscf_scf.mo_energy.astype(float)
 
     # Get integrals.
-    one_body_integrals, two_body_integrals = compute_integrals(
-        pyscf_molecule, pyscf_scf)
+    one_body_integrals, two_body_integrals = compute_integrals(pyscf_molecule, molecule.canonical_orbitals)
     molecule.one_body_integrals = one_body_integrals
     molecule.two_body_integrals = two_body_integrals
     molecule.overlap_integrals = pyscf_scf.get_ovlp()
