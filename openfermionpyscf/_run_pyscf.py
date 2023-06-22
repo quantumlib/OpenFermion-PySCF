@@ -45,25 +45,20 @@ def prepare_pyscf_molecule(molecule):
     return pyscf_molecule
 
 
-def compute_scf(pyscf_molecule, do_uhf=False):
+def compute_scf(pyscf_molecule):
     """
     Perform a Hartree-Fock calculation.
 
     Args:
         pyscf_molecule: A pyscf molecule instance.
-        do_uhf: Perform unrestricted HF.
 
     Returns:
         pyscf_scf: A PySCF "SCF" calculation object.
     """
-    if do_uhf:
-        pyscf_scf = scf.UHF(pyscf_molecule)
-        pyscf_scf.conv_tol = 1e-6
+    if pyscf_molecule.spin:
+        pyscf_scf = scf.ROHF(pyscf_molecule)
     else:
-        if pyscf_molecule.spin:
-            pyscf_scf = scf.ROHF(pyscf_molecule)
-        else:
-            pyscf_scf = scf.RHF(pyscf_molecule)
+        pyscf_scf = scf.RHF(pyscf_molecule)
     return pyscf_scf
 
 
@@ -149,7 +144,7 @@ def compute_integrals(pyscf_molecule, orb_coeff):
 
 
 def run_pyscf(molecule,
-              nat_orb=True,
+              nat_orb=False,
               run_scf=True,
               run_mp2=False,
               run_cisd=False,
@@ -180,7 +175,9 @@ def run_pyscf(molecule,
 
     # Run SCF.
     if nat_orb:
-        pyscf_scf = compute_scf(pyscf_molecule, do_uhf=True)
+        # UHF calculation
+        pyscf_scf = scf.UHF(pyscf_molecule)
+        pyscf_scf.conv_tol = 1e-6
         pyscf_scf.verbose = 0
         pyscf_scf.run(mixed_orbitals_density_matrix(pyscf_molecule))
 
@@ -193,10 +190,10 @@ def run_pyscf(molecule,
         # Ordering by occupancies
         idx = nat_occ.argsort()[::-1]
         nat_coeff = nat_coeff[:, idx]
-    else:
-        pyscf_scf = compute_scf(pyscf_molecule)
-        pyscf_scf.verbose = 0
-        pyscf_scf.run()
+
+    pyscf_scf = compute_scf(pyscf_molecule)
+    pyscf_scf.verbose = 0
+    pyscf_scf.run()
 
     molecule.hf_energy = float(pyscf_scf.e_tot)
     if verbose:
