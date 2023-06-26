@@ -145,6 +145,7 @@ def compute_integrals(pyscf_molecule, orb_coeff):
 
 def run_pyscf(molecule,
               nat_orb=False,
+              guess_mix=False,
               run_scf=True,
               run_mp2=False,
               run_cisd=False,
@@ -179,7 +180,10 @@ def run_pyscf(molecule,
         pyscf_scf = scf.UHF(pyscf_molecule)
         pyscf_scf.conv_tol = 1e-6
         pyscf_scf.verbose = 0
-        pyscf_scf.run(mixed_orbitals_density_matrix(pyscf_molecule))
+        if guess_mix:
+            pyscf_scf.run(mixed_orbitals_density_matrix(pyscf_molecule))
+        else:
+            pyscf_scf.run()
 
         # Calculation of natural orbitals
         dm_uhf = pyscf_scf.make_rdm1(pyscf_scf.mo_coeff, pyscf_scf.mo_occ)
