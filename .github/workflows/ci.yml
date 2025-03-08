@@ -17,6 +17,9 @@ name: Continuous Integration
 
 on: [pull_request]
 
+# Declare default permissions as read only.
+permissions: read-all
+
 jobs:
   pytest:
     name: Pytest Ubuntu python3.6
