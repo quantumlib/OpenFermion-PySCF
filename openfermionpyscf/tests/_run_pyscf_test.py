@@ -37,3 +37,18 @@ def test_run_pyscf():
                          run_fci=True,
                          verbose=1)
     assert isinstance(new_mole, PyscfMolecularData)
+
+def test_run_pyscf_without_save(monkeypatch):
+    save_called = []
+
+    def mock_save(self):
+        save_called.append(True)
+
+    monkeypatch.setattr(PyscfMolecularData, 'save', mock_save)
+
+    new_mole = run_pyscf(molecule,
+                         run_scf=True,
+                         save=False)
+
+    assert isinstance(new_mole, PyscfMolecularData)
+    assert not save_called
