@@ -105,9 +105,7 @@ def run_pyscf(molecule,
               run_fci=False,
               verbose=False,
               save=True):
-
-    """
-    This function runs a pyscf calculation.
+    """This function runs a pyscf calculation.
 
     Args:
         molecule: An instance of the MolecularData or PyscfMolecularData class.

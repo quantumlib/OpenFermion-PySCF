@@ -13,6 +13,8 @@
 """Tests many modules to call pyscf functions."""
 from __future__ import absolute_import
 
+import os
+
 from openfermion.chem import MolecularData
 from openfermionpyscf import run_pyscf
 from openfermionpyscf import PyscfMolecularData
@@ -38,17 +40,21 @@ def test_run_pyscf():
                          verbose=1)
     assert isinstance(new_mole, PyscfMolecularData)
 
-def test_run_pyscf_without_save(monkeypatch):
-    save_called = []
 
-    def mock_save(self):
-        save_called.append(True)
+def test_run_pyscf_without_save(tmp_path):
+    test_molecule = MolecularData(geometry,
+                                  basis,
+                                  multiplicity,
+                                  charge,
+                                  data_directory=str(tmp_path))
 
-    monkeypatch.setattr(PyscfMolecularData, 'save', mock_save)
-
-    new_mole = run_pyscf(molecule,
+    new_mole = run_pyscf(test_molecule,
                          run_scf=True,
                          save=False)
-
     assert isinstance(new_mole, PyscfMolecularData)
-    assert not save_called
+    assert not os.path.exists(f'{new_mole.filename}.hdf5')
+
+    new_mole_saved = run_pyscf(test_molecule,
+                               run_scf=True)
+    assert isinstance(new_mole_saved, PyscfMolecularData)
+    assert os.path.exists(f'{new_mole_saved.filename}.hdf5')
