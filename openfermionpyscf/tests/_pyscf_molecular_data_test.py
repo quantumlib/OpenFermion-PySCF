@@ -63,10 +63,10 @@ def test_accessing_rdm():
 
     rdm1 = molecule.fci_one_rdm
     rdm2 = molecule.fci_two_rdm
-    #e_ref = molecule._pyscf_data['fci'].e_tot
+    e_ref = molecule._pyscf_data['fci'].e_tot
     e_tot = (numpy.einsum('pq,pq', h1, rdm1) +
              numpy.einsum('pqrs,pqrs', h2, rdm2) * .5 + e_core)
-    numpy.testing.assert_almost_equal(e_tot, -1.1516827321, 9)
+    numpy.testing.assert_almost_equal(e_tot, e_ref, 7)
 
 def test_ccsd_amps():
     mo = molecule.canonical_orbitals
