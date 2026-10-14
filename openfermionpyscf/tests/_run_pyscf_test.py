@@ -24,13 +24,14 @@ geometry = [('H', (0., 0., 0.)), ('H', (0., 0., 0.7414))]
 basis = '6-31g'
 multiplicity = 1
 charge = 0
-molecule = MolecularData(geometry,
-                         basis,
-                         multiplicity,
-                         charge)
 
 
-def test_run_pyscf():
+def test_run_pyscf(tmp_path):
+    molecule = MolecularData(geometry,
+                             basis,
+                             multiplicity,
+                             charge,
+                             data_directory=str(tmp_path))
     new_mole = run_pyscf(molecule,
                          run_scf=True,
                          run_mp2=True,
@@ -39,6 +40,7 @@ def test_run_pyscf():
                          run_fci=True,
                          verbose=1)
     assert isinstance(new_mole, PyscfMolecularData)
+    assert os.path.exists(f'{new_mole.filename}.hdf5')
 
 
 def test_run_pyscf_without_save(tmp_path):
