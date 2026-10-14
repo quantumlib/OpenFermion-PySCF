@@ -103,9 +103,9 @@ def run_pyscf(molecule,
               run_cisd=False,
               run_ccsd=False,
               run_fci=False,
-              verbose=False):
-    """
-    This function runs a pyscf calculation.
+              verbose=False,
+              save=True):
+    """This function runs a pyscf calculation.
 
     Args:
         molecule: An instance of the MolecularData or PyscfMolecularData class.
@@ -115,6 +115,7 @@ def run_pyscf(molecule,
         run_ccsd: Optional boolean to run CCSD calculation.
         run_fci: Optional boolean to FCI calculation.
         verbose: Boolean whether to print calculation results to screen.
+        save: Boolean whether to save the calculated molecular data to disk.
 
     Returns:
         molecule: The updated PyscfMolecularData object. Note the attributes
@@ -202,7 +203,8 @@ def run_pyscf(molecule,
     # Return updated molecule instance.
     pyscf_molecular_data = PyscfMolecularData.__new__(PyscfMolecularData)
     pyscf_molecular_data.__dict__.update(molecule.__dict__)
-    pyscf_molecular_data.save()
+    if save:
+        pyscf_molecular_data.save()
     return pyscf_molecular_data
 
 
