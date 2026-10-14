@@ -237,7 +237,8 @@ def generate_molecular_hamiltonian(
 
     # Run electronic structure calculations
     molecule = run_pyscf(
-            MolecularData(geometry, basis, multiplicity, charge)
+            MolecularData(geometry, basis, multiplicity, charge),
+            save=False
     )
 
     # Freeze core orbitals and truncate to active space
