@@ -19,6 +19,7 @@ import runpy
 import openfermion.chem.molecular_data
 from openfermion.chem import MolecularData
 import openfermion.config
+from openfermionpyscf import generate_molecular_hamiltonian
 from openfermionpyscf import run_pyscf
 from openfermionpyscf import PyscfMolecularData
 
@@ -27,13 +28,14 @@ geometry = [('H', (0., 0., 0.)), ('H', (0., 0., 0.7414))]
 basis = '6-31g'
 multiplicity = 1
 charge = 0
-molecule = MolecularData(geometry,
-                         basis,
-                         multiplicity,
-                         charge)
 
 
-def test_run_pyscf():
+def test_run_pyscf(tmp_path):
+    molecule = MolecularData(geometry,
+                             basis,
+                             multiplicity,
+                             charge,
+                             data_directory=str(tmp_path))
     new_mole = run_pyscf(molecule,
                          run_scf=True,
                          run_mp2=True,
@@ -42,6 +44,7 @@ def test_run_pyscf():
                          run_fci=True,
                          verbose=1)
     assert isinstance(new_mole, PyscfMolecularData)
+    assert os.path.exists(f'{new_mole.filename}.hdf5')
 
 
 def test_run_pyscf_without_save(tmp_path):
@@ -91,3 +94,11 @@ def test_generate_diatomic(tmp_path, monkeypatch):
         assert not list(readonly_dir.iterdir())
     finally:
         readonly_dir.chmod(0o755)
+
+
+def test_generate_molecular_hamiltonian_does_not_save(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        'openfermion.chem.molecular_data.DATA_DIRECTORY', str(tmp_path))
+    geometry = [('H', (0., 0., 0.)), ('H', (0., 0., 0.7414))]
+    generate_molecular_hamiltonian(geometry, 'sto-3g', 1, 0)
+    assert not any(tmp_path.iterdir())
