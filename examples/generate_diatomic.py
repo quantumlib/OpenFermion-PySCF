@@ -39,6 +39,7 @@ if __name__ == '__main__':
     run_ccsd = 1
     run_fci = 1
     verbose = 1
+    data_directory = os.getcwd()
 
     # Run Diatomic Curve
     for spacing in spacings:
@@ -49,7 +50,8 @@ if __name__ == '__main__':
                                  basis,
                                  multiplicity,
                                  charge,
-                                 description)
+                                 description,
+                                 data_directory=data_directory)
 
         molecule = run_pyscf(molecule,
                              run_scf=run_scf,
@@ -58,7 +60,6 @@ if __name__ == '__main__':
                              run_ccsd=run_ccsd,
                              run_fci=run_fci,
                              verbose=verbose)
-        molecule.save()
 
     # Run Li H single point
     description = "1.45"
@@ -68,7 +69,8 @@ if __name__ == '__main__':
                              basis,
                              multiplicity,
                              charge,
-                             description)
+                             description,
+                             data_directory=data_directory)
 
     molecule = run_pyscf(molecule,
                          run_scf=run_scf,
@@ -77,4 +79,3 @@ if __name__ == '__main__':
                          run_ccsd=run_ccsd,
                          run_fci=run_fci,
                          verbose=verbose)
-    molecule.save()
