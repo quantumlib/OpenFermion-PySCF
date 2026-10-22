@@ -19,6 +19,7 @@ import runpy
 import openfermion.chem.molecular_data
 from openfermion.chem import MolecularData
 import openfermion.config
+from openfermionpyscf import generate_molecular_hamiltonian
 from openfermionpyscf import run_pyscf
 from openfermionpyscf import PyscfMolecularData
 
@@ -99,5 +100,5 @@ def test_generate_molecular_hamiltonian_does_not_save(tmp_path, monkeypatch):
     monkeypatch.setattr(
         'openfermion.chem.molecular_data.DATA_DIRECTORY', str(tmp_path))
     geometry = [('H', (0., 0., 0.)), ('H', (0., 0., 0.7414))]
-    openfermionpyscf.generate_molecular_hamiltonian(geometry, 'sto-3g', 1, 0)
+    generate_molecular_hamiltonian(geometry, 'sto-3g', 1, 0)
     assert not any(tmp_path.iterdir())
