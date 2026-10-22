@@ -93,3 +93,11 @@ def test_generate_diatomic(tmp_path, monkeypatch):
         assert not list(readonly_dir.iterdir())
     finally:
         readonly_dir.chmod(0o755)
+
+
+def test_generate_molecular_hamiltonian_does_not_save(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        'openfermion.chem.molecular_data.DATA_DIRECTORY', str(tmp_path))
+    geometry = [('H', (0., 0., 0.)), ('H', (0., 0., 0.7414))]
+    openfermionpyscf.generate_molecular_hamiltonian(geometry, 'sto-3g', 1, 0)
+    assert not any(tmp_path.iterdir())
